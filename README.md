@@ -2,8 +2,8 @@
 
 ## 1 介绍
 
-AT24CXX 软件包提供了at24cxx 系列EEPROM `at24cxx` 基本功能。本文介绍该软件包的基本读写功能，以及 `Finsh/MSH` 测试命令等。
-目前在 stm32l475-atk-pandora 上测试 at24c02 已通过。
+AT24CXX 软件包提供了at24cxx 系列 EEPROM 基本功能。本文介绍该软件包的基本读写功能，以及 `Finsh/MSH` 测试命令等。
+目前已在 stm32l475-atk-pandora 上验证 at24c02 通过。
 
 ### 1.1 目录结构
 
