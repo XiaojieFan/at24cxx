@@ -6,35 +6,32 @@
  * Change Logs:
  * Date           Author       Notes
  * 2019-04-13     XiaojieFan   the first version
+ * 2019-06-14     tyustli      port to rt-thread rt_i2c_client
  */
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <board.h>
-
-
 #include <string.h>
 
 #define DBG_ENABLE
-#define DBG_SECTION_NAME "AHT10"
+#define DBG_SECTION_NAME "AT24CXX"
 #define DBG_LEVEL DBG_LOG
 #define DBG_COLOR
 #include <rtdbg.h>
 
+#ifdef PKG_USING_AT24CXX
 #include "at24cxx.h"
 
-#ifdef PKG_USING_AT24CXX
-#define AT24CXX_ADDR 0x50                      //A0 A1 A2 connect GND
-
-static rt_err_t read_regs(struct rt_i2c_bus_device *bus, rt_uint8_t len, rt_uint8_t *buf)
+static rt_err_t read_regs(struct rt_i2c_client *client, rt_uint8_t len, rt_uint8_t *buf)
 {
     struct rt_i2c_msg msgs;
 
-    msgs.addr = AT24CXX_ADDR;
+    msgs.addr = client->client_addr;
     msgs.flags = RT_I2C_RD;
     msgs.buf = buf;
     msgs.len = len;
 
-    if (rt_i2c_transfer(bus, &msgs, 1) == 1)
+    if (rt_i2c_transfer(client->bus, &msgs, 1) == 1)
     {
         return RT_EOK;
     }
@@ -43,49 +40,54 @@ static rt_err_t read_regs(struct rt_i2c_bus_device *bus, rt_uint8_t len, rt_uint
         return -RT_ERROR;
     }
 }
-uint8_t at24cxx_read_one_byte(struct rt_i2c_bus_device *bus, uint8_t readAddr)
+
+static rt_err_t at24cxx_read_one_byte(struct rt_i2c_client *client, uint8_t readAddr)
 {
     rt_uint8_t buf[2];
     rt_uint8_t temp;
     buf[0] = readAddr;
-    if (rt_i2c_master_send(bus, AT24CXX_ADDR, 0, buf, 1) == 0)
+    
+    if (rt_i2c_master_send(client->bus, client->client_addr, 0, buf, 1) == 0)
     {
         return -RT_ERROR;
     }
-    read_regs(bus, 1, &temp);
+    read_regs(client, 1, &temp);
+    
     return temp;
 }
 
-rt_err_t at24cxx_write_one_byte(struct rt_i2c_bus_device *bus, uint8_t writeAddr, uint8_t dataToWrite)
+static rt_err_t at24cxx_write_one_byte(struct rt_i2c_client *client, uint8_t writeAddr, uint8_t dataToWrite)
 {
     rt_uint8_t buf[2];
 
-    buf[0] = writeAddr; //cmd
+    buf[0] = writeAddr; 
     buf[1] = dataToWrite;
-    //buf[2] = data[1];
 
-
-    if (rt_i2c_master_send(bus, AT24CXX_ADDR, 0, buf, 2) == 2)
+    if (rt_i2c_master_send(client->bus, client->client_addr, 0, buf, 2) == 2)
         return RT_EOK;
     else
         return -RT_ERROR;
 
 }
 
-rt_err_t at24cxx_check(at24cxx_device_t dev)
+rt_err_t at24cxx_check(struct rt_i2c_client *dev)
 {
     uint8_t temp;
-    rt_err_t result;
     RT_ASSERT(dev);
 
-    temp = at24cxx_read_one_byte(dev->i2c, 255);
-    if (temp == 0x55) return RT_EOK;
+    temp = at24cxx_read_one_byte(dev, 255);
+    
+    if (temp == 0x55) 
+    {
+        return RT_EOK;
+    }
     else
     {
-        at24cxx_write_one_byte(dev->i2c, 255, 0x55);
-        temp = at24cxx_read_one_byte(dev->i2c, 255);
+        at24cxx_write_one_byte(dev, 255, 0x55);
+        temp = at24cxx_read_one_byte(dev, 255);
         if (temp == 0x55) return RT_EOK;
     }
+    
     return RT_ERROR;
 }
 
@@ -98,24 +100,15 @@ rt_err_t at24cxx_check(at24cxx_device_t dev)
  * @param NumToRead
  * @return RT_EOK  write ok.
  */
-rt_err_t at24cxx_read(at24cxx_device_t dev, uint8_t ReadAddr, uint8_t *pBuffer, uint16_t NumToRead)
+rt_err_t at24cxx_read(struct rt_i2c_client *dev, uint8_t ReadAddr, uint8_t *pBuffer, uint16_t NumToRead)
 {
-    rt_err_t result;
     RT_ASSERT(dev);
-    result = rt_mutex_take(dev->lock, RT_WAITING_FOREVER);
-    if (result == RT_EOK)
+
+    while (NumToRead)
     {
-        while (NumToRead)
-        {
-            *pBuffer++ = at24cxx_read_one_byte(dev->i2c, ReadAddr++);
-            NumToRead--;
-        }
+        *pBuffer++ = at24cxx_read_one_byte(dev, ReadAddr++);
+        NumToRead--;
     }
-    else
-    {
-        LOG_E("The at24cxx could not respond  at this time. Please try again");
-    }
-    rt_mutex_release(dev->lock);
 
     return RT_EOK;
 }
@@ -129,37 +122,28 @@ rt_err_t at24cxx_read(at24cxx_device_t dev, uint8_t ReadAddr, uint8_t *pBuffer, 
  * @param NumToWrite
  * @return RT_EOK  write ok.at24cxx_device_t dev
  */
-rt_err_t at24cxx_write(at24cxx_device_t dev, uint8_t WriteAddr, uint8_t *pBuffer, uint16_t NumToWrite)
+rt_err_t at24cxx_write(struct rt_i2c_client *dev, uint8_t WriteAddr, uint8_t *pBuffer, uint16_t NumToWrite)
 {
     uint8_t i = 0;
-    rt_err_t result;
     RT_ASSERT(dev);
-    result = rt_mutex_take(dev->lock, RT_WAITING_FOREVER);
-    if (result == RT_EOK)
-    {
-        while (1) //NumToWrite--
-        {
-            if (at24cxx_write_one_byte(dev->i2c, WriteAddr, pBuffer[i]) != RT_EOK)
-            {
-                rt_thread_mdelay(1);
-            }
-            else
-            {
-                WriteAddr++;
-                i++;
-            }
-            if (WriteAddr == NumToWrite)
-            {
-                break;
-            }
 
-        }
-    }
-    else
+    while (1) 
     {
-        LOG_E("The at24cxx could not respond  at this time. Please try again");
+        if (at24cxx_write_one_byte(dev, WriteAddr, pBuffer[i]) != RT_EOK)
+        {
+            rt_thread_mdelay(1);
+        }
+        else
+        {
+            WriteAddr++;
+            i++;
+        }
+        if (WriteAddr == NumToWrite)
+        {
+            break;
+        }
+
     }
-    rt_mutex_release(dev->lock);
 
     return RT_EOK;
 }
@@ -170,36 +154,29 @@ rt_err_t at24cxx_write(at24cxx_device_t dev, uint8_t WriteAddr, uint8_t *pBuffer
  *
  * @return the at24cxx device.
  */
-at24cxx_device_t at24cxx_init(const char *i2c_bus_name)
+struct rt_i2c_client *at24cxx_init(const char *i2c_bus_name)
 {
-    at24cxx_device_t dev;
-
+    struct rt_i2c_client *i2c_client;
+    
     RT_ASSERT(i2c_bus_name);
 
-    dev = rt_calloc(1, sizeof(struct at24cxx_device));
-    if (dev == RT_NULL)
+    i2c_client = rt_calloc(1, sizeof(struct rt_i2c_client));
+    if (i2c_client == RT_NULL)
     {
         LOG_E("Can't allocate memory for at24cxx device on '%s' ", i2c_bus_name);
         return RT_NULL;
     }
 
-    dev->i2c = rt_i2c_bus_device_find(i2c_bus_name);
-    if (dev->i2c == RT_NULL)
+    i2c_client->bus = rt_i2c_bus_device_find(i2c_bus_name);
+    if (i2c_client->bus == RT_NULL)
     {
         LOG_E("Can't find at24cxx device on '%s' ", i2c_bus_name);
-        rt_free(dev);
+        rt_free(i2c_client);
         return RT_NULL;
     }
-
-    dev->lock = rt_mutex_create("mutex_at24cxx", RT_IPC_FLAG_FIFO);
-    if (dev->lock == RT_NULL)
-    {
-        LOG_E("Can't create mutex for at24cxx device on '%s' ", i2c_bus_name);
-        rt_free(dev);
-        return RT_NULL;
-    }
-
-    return dev;
+    i2c_client->client_addr = AT24CXX_ADDR;
+    
+    return i2c_client;
 }
 
 /**
@@ -207,21 +184,19 @@ at24cxx_device_t at24cxx_init(const char *i2c_bus_name)
  *
  * @param dev the pointer of device driver structure
  */
-void at24cxx_deinit(at24cxx_device_t dev)
+void at24cxx_deinit(struct rt_i2c_client *dev)
 {
     RT_ASSERT(dev);
-
-    rt_mutex_delete(dev->lock);
 
     rt_free(dev);
 }
 
-uint8_t TEST_BUFFER[] = "WELCOM TO RTT";
+static rt_uint8_t TEST_BUFFER[] = "Welcom To RT-Thread";
 #define SIZE sizeof(TEST_BUFFER)
 
 void at24cxx(int argc, char *argv[])
 {
-    static at24cxx_device_t dev = RT_NULL;
+    static struct rt_i2c_client *dev = RT_NULL;
 
     if (argc > 1)
     {
@@ -230,7 +205,7 @@ void at24cxx(int argc, char *argv[])
             if (argc > 2)
             {
                 /* initialize the sensor when first probe */
-                if (!dev || strcmp(dev->i2c->parent.parent.name, argv[2]))
+                if (!dev || strcmp(dev->bus->parent.parent.name, argv[2]))
                 {
                     /* deinit the old device */
                     if (dev)
@@ -244,7 +219,7 @@ void at24cxx(int argc, char *argv[])
             {
                 rt_kprintf("at24cxx probe <dev_name>   - probe sensor by given name\n");
             }
-        }
+        } 
         else if (!strcmp(argv[1], "read"))
         {
             if (dev)
@@ -290,4 +265,5 @@ void at24cxx(int argc, char *argv[])
     }
 }
 MSH_CMD_EXPORT(at24cxx, at24cxx eeprom function);
+
 #endif
