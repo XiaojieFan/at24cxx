@@ -29,6 +29,10 @@
 #define AT24C256    32767
 
 #define EE_TYPE AT24C02
-#define AT24CXX_ADDR 0x50                      //A0 A1 A2 connect GND
+#define AT24CXX_ADDR 0x50
+
+rt_err_t at24cxx_read(struct rt_i2c_client *dev, uint8_t ReadAddr, uint8_t *pBuffer, uint16_t NumToRead);
+rt_err_t at24cxx_write(struct rt_i2c_client *dev, uint8_t WriteAddr, uint8_t *pBuffer, uint16_t NumToWrite);
+struct rt_i2c_client *at24cxx_init(const char *i2c_bus_name);
 
 #endif

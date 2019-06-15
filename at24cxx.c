@@ -22,14 +22,56 @@
 #ifdef PKG_USING_AT24CXX
 #include "at24cxx.h"
 
-static rt_err_t read_regs(struct rt_i2c_client *client, rt_uint8_t len, rt_uint8_t *buf)
+/**
+ * This function read one byte from specific position
+ *
+ * @file   at24cxx.c
+ * @param  client      the client of i2c bus
+ * @param  readAddr    the position to read
+ * @return             the data you have read
+ */
+static rt_uint8_t at24cxx_read_one_byte(struct rt_i2c_client *client, rt_uint8_t readAddr)
 {
+    rt_uint8_t read_data;
+    rt_uint8_t read_address;
+    struct rt_i2c_msg msgs[2];
+
+    read_address = readAddr;
+    msgs[0].addr  = client->client_addr;
+    msgs[0].flags = RT_I2C_WR;
+    msgs[0].buf   = &read_address;
+    msgs[0].len   = 1;
+
+    msgs[1].addr  = client->client_addr;
+    msgs[1].flags = RT_I2C_RD;
+    msgs[1].buf   = &read_data;
+    msgs[1].len   = 1;
+
+    rt_i2c_transfer(client->bus, msgs, 2);
+
+    return read_data;
+}
+
+/**
+ * This function write one byte from specific position
+ *
+ * @file   at24cxx.c
+ * @param  client      the client of i2c bus
+ * @param  writeAddr   the position to write
+ * @param  dataToWrite the data to write
+ * @return             RT_EOK/RT_ERROR
+ */
+static rt_err_t at24cxx_write_one_byte(struct rt_i2c_client *client, rt_uint8_t writeAddr, rt_uint8_t dataToWrite)
+{
+    rt_uint8_t write_buf[2];
     struct rt_i2c_msg msgs;
 
-    msgs.addr = client->client_addr;
-    msgs.flags = RT_I2C_RD;
-    msgs.buf = buf;
-    msgs.len = len;
+    write_buf[0] = writeAddr;
+    write_buf[1] = dataToWrite;
+    msgs.addr  = client->client_addr;
+    msgs.flags = RT_I2C_WR;
+    msgs.buf   = write_buf;
+    msgs.len   = 2;
 
     if (rt_i2c_transfer(client->bus, &msgs, 1) == 1)
     {
@@ -41,43 +83,14 @@ static rt_err_t read_regs(struct rt_i2c_client *client, rt_uint8_t len, rt_uint8
     }
 }
 
-static rt_err_t at24cxx_read_one_byte(struct rt_i2c_client *client, uint8_t readAddr)
-{
-    rt_uint8_t buf[2];
-    rt_uint8_t temp;
-    buf[0] = readAddr;
-    
-    if (rt_i2c_master_send(client->bus, client->client_addr, 0, buf, 1) == 0)
-    {
-        return -RT_ERROR;
-    }
-    read_regs(client, 1, &temp);
-    
-    return temp;
-}
-
-static rt_err_t at24cxx_write_one_byte(struct rt_i2c_client *client, uint8_t writeAddr, uint8_t dataToWrite)
-{
-    rt_uint8_t buf[2];
-
-    buf[0] = writeAddr; 
-    buf[1] = dataToWrite;
-
-    if (rt_i2c_master_send(client->bus, client->client_addr, 0, buf, 2) == 2)
-        return RT_EOK;
-    else
-        return -RT_ERROR;
-
-}
-
-rt_err_t at24cxx_check(struct rt_i2c_client *dev)
+static rt_err_t at24cxx_check(struct rt_i2c_client *dev)
 {
     uint8_t temp;
     RT_ASSERT(dev);
 
     temp = at24cxx_read_one_byte(dev, 255);
-    
-    if (temp == 0x55) 
+
+    if (temp == 0x55)
     {
         return RT_EOK;
     }
@@ -85,21 +98,14 @@ rt_err_t at24cxx_check(struct rt_i2c_client *dev)
     {
         at24cxx_write_one_byte(dev, 255, 0x55);
         temp = at24cxx_read_one_byte(dev, 255);
-        if (temp == 0x55) return RT_EOK;
+
+        if (temp == 0x55)
+            return RT_EOK;
     }
-    
-    return RT_ERROR;
+
+    return -RT_ERROR;
 }
 
-/**
- * This function read the specific numbers of data to the specific position
- *
- * @param bus the name of at24cxx device
- * @param ReadAddr the start position to read
- * @param pBuffer  the read data store position
- * @param NumToRead
- * @return RT_EOK  write ok.
- */
 rt_err_t at24cxx_read(struct rt_i2c_client *dev, uint8_t ReadAddr, uint8_t *pBuffer, uint16_t NumToRead)
 {
     RT_ASSERT(dev);
@@ -116,18 +122,19 @@ rt_err_t at24cxx_read(struct rt_i2c_client *dev, uint8_t ReadAddr, uint8_t *pBuf
 /**
  * This function write the specific numbers of data to the specific position
  *
- * @param bus the name of at24cxx device
- * @param WriteAddr the start position to write
- * @param pBuffer  the data need to write
- * @param NumToWrite
- * @return RT_EOK  write ok.at24cxx_device_t dev
+ * @file   at24cxx.c
+ * @param  bus         the name of at24cxx device
+ * @param  WriteAddr   the start position to write
+ * @param  pBuffer     the data need to write
+ * @param  NumToWrite  the num of write data
+ * @return RT_EOK      write ok.at24cxx_device_t dev
  */
 rt_err_t at24cxx_write(struct rt_i2c_client *dev, uint8_t WriteAddr, uint8_t *pBuffer, uint16_t NumToWrite)
 {
     uint8_t i = 0;
     RT_ASSERT(dev);
 
-    while (1) 
+    while (1)
     {
         if (at24cxx_write_one_byte(dev, WriteAddr, pBuffer[i]) != RT_EOK)
         {
@@ -157,7 +164,7 @@ rt_err_t at24cxx_write(struct rt_i2c_client *dev, uint8_t WriteAddr, uint8_t *pB
 struct rt_i2c_client *at24cxx_init(const char *i2c_bus_name)
 {
     struct rt_i2c_client *i2c_client;
-    
+
     RT_ASSERT(i2c_bus_name);
 
     i2c_client = rt_calloc(1, sizeof(struct rt_i2c_client));
@@ -175,7 +182,7 @@ struct rt_i2c_client *at24cxx_init(const char *i2c_bus_name)
         return RT_NULL;
     }
     i2c_client->client_addr = AT24CXX_ADDR;
-    
+
     return i2c_client;
 }
 
@@ -194,7 +201,7 @@ void at24cxx_deinit(struct rt_i2c_client *dev)
 static rt_uint8_t TEST_BUFFER[] = "Welcom To RT-Thread";
 #define SIZE sizeof(TEST_BUFFER)
 
-void at24cxx(int argc, char *argv[])
+static void at24cxx(int argc, char *argv[])
 {
     static struct rt_i2c_client *dev = RT_NULL;
 
@@ -219,7 +226,7 @@ void at24cxx(int argc, char *argv[])
             {
                 rt_kprintf("at24cxx probe <dev_name>   - probe sensor by given name\n");
             }
-        } 
+        }
         else if (!strcmp(argv[1], "read"))
         {
             if (dev)
@@ -244,10 +251,11 @@ void at24cxx(int argc, char *argv[])
         }
         else if (!strcmp(argv[1], "check"))
         {
-            if (at24cxx_check(dev) == 1)
+            if (at24cxx_check(dev) != RT_EOK)
             {
                 rt_kprintf("check faild \n");
             }
+            rt_kprintf("check success\n");
         }
         else
         {
