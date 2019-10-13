@@ -26,6 +26,7 @@
 #define AT24C64     8191
 #define AT24C128    16383
 #define AT24C256    32767
+#define AT24C512    65535
 
 #define EE_TYPE AT24C02
 struct at24cxx_device
