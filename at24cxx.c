@@ -43,12 +43,18 @@ static rt_err_t read_regs(struct rt_i2c_bus_device *bus, rt_uint8_t len, rt_uint
         return -RT_ERROR;
     }
 }
-uint8_t at24cxx_read_one_byte(struct rt_i2c_bus_device *bus, uint8_t readAddr)
+uint8_t at24cxx_read_one_byte(struct rt_i2c_bus_device *bus, uint16_t readAddr)
 {
     rt_uint8_t buf[2];
     rt_uint8_t temp;
+#if	(EE_TYPE > AT24C16)  
+    buf[0] = (uint8_t)(readAddr>>8);	
+	buf[1] = (uint8_t)readAddr;
+    if (rt_i2c_master_send(bus, AT24CXX_ADDR, 0, buf, 2) == 0) 
+#else
     buf[0] = readAddr;
     if (rt_i2c_master_send(bus, AT24CXX_ADDR, 0, buf, 1) == 0)
+#endif        
     {
         return -RT_ERROR;
     }
@@ -56,16 +62,21 @@ uint8_t at24cxx_read_one_byte(struct rt_i2c_bus_device *bus, uint8_t readAddr)
     return temp;
 }
 
-rt_err_t at24cxx_write_one_byte(struct rt_i2c_bus_device *bus, uint8_t writeAddr, uint8_t dataToWrite)
+rt_err_t at24cxx_write_one_byte(struct rt_i2c_bus_device *bus, uint16_t writeAddr, uint8_t dataToWrite)
 {
-    rt_uint8_t buf[2];
-
+    rt_uint8_t buf[3];
+#if	(EE_TYPE > AT24C16)      
+    buf[0] = (uint8_t)(writeAddr>>8);	
+	buf[1] = (uint8_t)writeAddr;
+    buf[2] = dataToWrite;
+    if (rt_i2c_master_send(bus, AT24CXX_ADDR, 0, buf, 3) == 3)    
+#else    
     buf[0] = writeAddr; //cmd
     buf[1] = dataToWrite;
     //buf[2] = data[1];
 
-
     if (rt_i2c_master_send(bus, AT24CXX_ADDR, 0, buf, 2) == 2)
+#endif        
         return RT_EOK;
     else
         return -RT_ERROR;
@@ -98,7 +109,7 @@ rt_err_t at24cxx_check(at24cxx_device_t dev)
  * @param NumToRead
  * @return RT_EOK  write ok.
  */
-rt_err_t at24cxx_read(at24cxx_device_t dev, uint8_t ReadAddr, uint8_t *pBuffer, uint16_t NumToRead)
+rt_err_t at24cxx_read(at24cxx_device_t dev, uint16_t ReadAddr, uint8_t *pBuffer, uint16_t NumToRead)
 {
     rt_err_t result;
     RT_ASSERT(dev);
@@ -129,9 +140,9 @@ rt_err_t at24cxx_read(at24cxx_device_t dev, uint8_t ReadAddr, uint8_t *pBuffer, 
  * @param NumToWrite
  * @return RT_EOK  write ok.at24cxx_device_t dev
  */
-rt_err_t at24cxx_write(at24cxx_device_t dev, uint8_t WriteAddr, uint8_t *pBuffer, uint16_t NumToWrite)
+rt_err_t at24cxx_write(at24cxx_device_t dev, uint16_t WriteAddr, uint8_t *pBuffer, uint16_t NumToWrite)
 {
-    uint8_t i = 0;
+    uint16_t i = 0;
     rt_err_t result;
     RT_ASSERT(dev);
     result = rt_mutex_take(dev->lock, RT_WAITING_FOREVER);
@@ -148,7 +159,7 @@ rt_err_t at24cxx_write(at24cxx_device_t dev, uint8_t WriteAddr, uint8_t *pBuffer
                 WriteAddr++;
                 i++;
             }
-            if (WriteAddr == NumToWrite)
+            if (i == NumToWrite)
             {
                 break;
             }
