@@ -49,7 +49,7 @@ uint8_t at24cxx_read_one_byte(struct rt_i2c_bus_device *bus, uint16_t readAddr)
     rt_uint8_t temp;
 #if	(EE_TYPE > AT24C16)  
     buf[0] = (uint8_t)(readAddr>>8);	
-	buf[1] = (uint8_t)readAddr;
+    buf[1] = (uint8_t)readAddr;
     if (rt_i2c_master_send(bus, AT24CXX_ADDR, 0, buf, 2) == 0) 
 #else
     buf[0] = readAddr;
@@ -67,7 +67,7 @@ rt_err_t at24cxx_write_one_byte(struct rt_i2c_bus_device *bus, uint16_t writeAdd
     rt_uint8_t buf[3];
 #if	(EE_TYPE > AT24C16)      
     buf[0] = (uint8_t)(writeAddr>>8);	
-	buf[1] = (uint8_t)writeAddr;
+    buf[1] = (uint8_t)writeAddr;
     buf[2] = dataToWrite;
     if (rt_i2c_master_send(bus, AT24CXX_ADDR, 0, buf, 3) == 3)    
 #else    
