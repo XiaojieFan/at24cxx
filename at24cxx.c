@@ -74,6 +74,7 @@ rt_err_t at24cxx_write_one_byte(struct rt_i2c_bus_device *bus, uint16_t writeAdd
     buf[0] = writeAddr; //cmd
     buf[1] = dataToWrite;
     //buf[2] = data[1];
+    
 
     if (rt_i2c_master_send(bus, AT24CXX_ADDR, 0, buf, 2) == 2)
 #endif        
