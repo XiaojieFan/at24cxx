@@ -153,7 +153,7 @@ rt_err_t at24cxx_write(at24cxx_device_t dev, uint16_t WriteAddr, uint8_t *pBuffe
         {
             if (at24cxx_write_one_byte(dev->i2c, WriteAddr, pBuffer[i]) != RT_EOK)
             {
-                rt_thread_mdelay(1);
+                rt_thread_mdelay(EE_TWR);
             }
             else
             {
