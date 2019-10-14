@@ -28,7 +28,8 @@
 #define AT24C256    32767
 #define AT24C512    65535
 
-#define EE_TYPE AT24C02
+#define EE_TWR  5
+#define EE_TYPE AT24C512
 struct at24cxx_device
 {
     struct rt_i2c_bus_device *i2c;
