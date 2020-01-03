@@ -14,9 +14,8 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-
-#include <rthw.h>
 #include <rtdevice.h>
+#include <board.h>
 
 #define AT24C01     0
 #define AT24C02     1
@@ -31,7 +30,10 @@
 #define AT24CTYPE   10   // Number of supported types
 
 #define EE_TWR      5
+
+#ifndef EE_TYPE
 #define EE_TYPE     AT24C02
+#endif
 
 struct at24cxx_device
 {
