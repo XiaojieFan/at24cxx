@@ -3,7 +3,7 @@
 ## 1 介绍
 
 AT24CXX 软件包提供了at24cxx 系列 EEPROM 基本功能。本文介绍该软件包的基本读写功能，以及 `Finsh/MSH` 测试命令等。
-目前已在 stm32l475-atk-pandora 上验证 at24c02 通过。
+目前已在at24c512验证通过。
 
 ### 1.1 目录结构
 
@@ -73,7 +73,7 @@ void at24cxx_deinit(aht10_device_t dev)
 
 #### 3.1.3 读取 
 
-rt_err_t at24cxx_read(struct rt_i2c_bus_device *bus,uint8_t ReadAddr,uint8_t *pBuffer,uint16_t NumToRead)
+rt_err_t at24cxx_read(struct rt_i2c_bus_device *bus,uint16_t ReadAddr,uint8_t *pBuffer,uint16_t NumToRead)
 
 通过 `at24cxx` 读取 eeprom ，在AT24CXX里面的指定地址开始读出指定个数的数据，具体参数与返回说明如下表
 
@@ -86,7 +86,7 @@ rt_err_t at24cxx_read(struct rt_i2c_bus_device *bus,uint8_t ReadAddr,uint8_t *pB
 
 #### 3.1.4 写入
 
-rt_err_t at24cxx_write(struct rt_i2c_bus_device *bus,uint8_t WriteAddr,uint8_t *pBuffer,uint16_t NumToWrite)
+rt_err_t at24cxx_write(struct rt_i2c_bus_device *bus,uint16_t WriteAddr,uint8_t *pBuffer,uint16_t NumToWrite)
 
 
 通过 `at24cxx` 写入，在AT24CXX里面的指定地址开始写入指定个数的数据，具体参数与返回说明如下表
@@ -140,11 +140,13 @@ msh />
 
 ## 4 注意事项
 
-- 目前软件包在连续写入多个字节时候，中间需要适当的延时，才能保证写入成功，程序目前是延迟 1 ms 时间 。
+- 请在at24cxx.h中修改EE_TYPE为自己使用的型号(默认为AT25C512) 。
+- 请在at24cxx.h中修改EE_TWR为自己使用EEPROM的Write Cycle Time，具体值请查看芯片datasheet(默认为5ms) 。
 - 从设备地址为7位地址 0x50, 而不是 0xA0 。
 
 ## 5 联系方式
 
-* 维护：[FanXiaojie](https://github.com/XiaojieFan)
-* 主页：https://github.com/XiaojieFan/at24cxx
+* 维护：[wangxiaohui](https://github.com/cw339004111)
+* 主页：https://github.com/cw339004111/at24cxx
+* 邮箱：339004111@qq.com
 
