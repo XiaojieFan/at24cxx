@@ -146,7 +146,6 @@ msh />
 
 ## 5 联系方式
 
-* 维护：[wangxiaohui](https://github.com/cw339004111)
-* 主页：https://github.com/cw339004111/at24cxx
-* 邮箱：339004111@qq.com
+* 维护：[XiaojieFan](https://github.com/XiaojieFan)
+* 主页：https://github.com/XiaojieFan/at24cxx
 
