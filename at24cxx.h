@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2019-04-13     XiaojieFan   the first version
- * 2019-12-04     RenMing      Use PAGE WRITE instead of BYTE WRITE and input address can be selected 
+ * 2019-12-04     RenMing      Use PAGE WRITE instead of BYTE WRITE and input address can be selected
  */
 
 #ifndef __AT24CXX_H__
