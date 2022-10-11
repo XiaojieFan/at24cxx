@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2019-04-13     XiaojieFan   the first version
  * 2019-12-04     RenMing      ADD PAGE WRITE and input address can be selected
+ * 2022-10-11     GuangweiRen  Delay 2ms after writing one byte
  */
 #include <rtthread.h>
 #include <rtdevice.h>
@@ -323,6 +324,7 @@ rt_err_t at24cxx_write(at24cxx_device_t dev, uint32_t WriteAddr, uint8_t *pBuffe
             }
             else
             {
+                rt_thread_mdelay(2);
                 WriteAddr++;
                 i++;
             }
