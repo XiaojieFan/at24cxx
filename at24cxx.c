@@ -317,20 +317,15 @@ rt_err_t at24cxx_write(at24cxx_device_t dev, uint32_t WriteAddr, uint8_t *pBuffe
     {
         while (1) //NumToWrite--
         {
-            if (at24cxx_write_one_byte(dev, WriteAddr, pBuffer[i]) != RT_EOK)
-            {
-                rt_thread_mdelay(EE_TWR);
-            }
-            else
+            if (at24cxx_write_one_byte(dev, WriteAddr, pBuffer[i]) == RT_EOK)
             {
                 WriteAddr++;
-                i++;
             }
-            if (i == NumToWrite)
+            if (++i == NumToWrite)
             {
                 break;
             }
-
+            rt_thread_mdelay(EE_TWR);
         }
     }
     else
