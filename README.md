@@ -50,13 +50,14 @@ RT-Thread online packages
 
 #### 3.1.1  初始化 
 
-`at24cxx_device_t at24cxx_init(const char *i2c_bus_name)`
+`at24cxx_device_t at24cxx_init(const char *i2c_bus_name, uint8_t addr)
 
 根据总线名称，自动初始化对应的 AT24CXX 设备，具体参数与返回说明如下表
 
 | 参数    | 描述                      |
 | :----- | :----------------------- |
 | name   | i2c 设备名称 |
+| addr   | 地址         |
 | **返回** | **描述** |
 | != NULL | 将返回 at24cxx 设备对象 |
 | = NULL | 查找失败 |
