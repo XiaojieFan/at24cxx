@@ -174,7 +174,7 @@ rt_err_t at24cxx_write_page(at24cxx_device_t dev, uint32_t wirteAddr, uint8_t *p
     msgs[1].buf = pBuffer;
     msgs[1].len = numToWrite;
 
-    if(rt_i2c_transfer(dev->i2c, msgs, 2) == 0)
+    if(rt_i2c_transfer(dev->i2c, msgs, 2) <= 0)
     {
         return RT_ERROR;
     }
