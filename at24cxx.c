@@ -142,7 +142,7 @@ rt_err_t at24cxx_read_page(at24cxx_device_t dev, uint32_t readAddr, uint8_t *pBu
     msgs[1].buf = pBuffer;
     msgs[1].len = numToRead;
 
-    if(rt_i2c_transfer(dev->i2c, msgs, 2) == 0)
+    if(rt_i2c_transfer(dev->i2c, msgs, 2) <= 0)
     {
         return RT_ERROR;
     }
