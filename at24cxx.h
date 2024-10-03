@@ -31,9 +31,13 @@
 
 #define EE_TWR      5
 
-#ifndef EE_TYPE
-#define EE_TYPE     AT24C02
+#ifndef PKG_AT24CXX_EE_TYPE
+#define PKG_AT24CXX_EE_TYPE AT24C02
 #endif
+
+#define AT24CXX_A0  (1 << 0)
+#define AT24CXX_A1  (1 << 1)
+#define AT24CXX_A2  (1 << 2)
 
 struct at24cxx_device
 {
@@ -44,6 +48,7 @@ struct at24cxx_device
 typedef struct at24cxx_device *at24cxx_device_t;
 
 extern at24cxx_device_t at24cxx_init(const char *i2c_bus_name, uint8_t AddrInput);
+extern rt_err_t at24cxx_check(at24cxx_device_t dev);
 extern rt_err_t at24cxx_read(at24cxx_device_t dev, uint32_t ReadAddr, uint8_t *pBuffer, uint16_t NumToRead);
 extern rt_err_t at24cxx_write(at24cxx_device_t dev, uint32_t WriteAddr, uint8_t *pBuffer, uint16_t NumToWrite);
 extern rt_err_t at24cxx_page_read(at24cxx_device_t dev, uint32_t ReadAddr, uint8_t *pBuffer, uint16_t NumToRead);

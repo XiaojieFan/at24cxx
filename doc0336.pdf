@@ -1,0 +1,714 @@
+Features                                                                                    2-Wire
+                                                                                            Serial EEPROM
+• Low-Voltage and Standard-Voltage Operation
+      – 2.7 (VCC = 2.7V to 5.5V)                                                            32K (4096 x 8)
+      – 1.8 (VCC = 1.8V to 5.5V)                                                            64K (8192 x 8)
+
+• Low-Power Devices (ISB = 2 µA at 5.5V) Available                                          AT24C32
+• Internally Organized 4096 x 8, 8192 x 8                                                   AT24C64
+• 2-Wire Serial Interface
+• Schmitt Trigger, Filtered Inputs for Noise Suppression
+• Bidirectional Data Transfer Protocol
+• 100 kHz (1.8V, 2.5V, 2.7V) and 400 kHz (5V) Clock Rate
+• Write Protect Pin for Hardware Data Protection
+• 32-Byte Page Write Mode (Partial Page Writes Allowed)
+• Self-Timed Write Cycle (10 ms max)
+• High Reliability
+
+      – Endurance: 1 Million Write Cycles
+      – Data Retention: 100 Years
+• Automotive Grade and Extended Temperature Devices Available
+• 8-Pin JEDEC PDIP, 8-Pin JEDEC SOIC, 8-Pin EIAJ SOIC,
+   and 8-pin TSSOP Packages
+
+Description
+
+The AT24C32/64 provides 32,768/65,536 bits of serial electrically erasable and pro-
+grammable read only memory (EEPROM) organized as 4096/8192 words of 8 bits
+each. The device’s cascadable feature allows up to 8 devices to share a common 2-
+wire bus. The device is optimized for use in many industrial and commercial applica-
+tions where low power and low voltage operation are essential. The AT24C32/64 is
+available in space saving 8-pin JEDEC PDIP, 8-pin JEDEC SOIC, 8-pin EIAJ SOIC,
+and 8-pin TSSOP (AT24C64) packages and is accessed via a 2-wire serial interface.
+In addition, the entire family is available in 2.7V (2.7V to 5.5V) and 1.8V (1.8V to 5.5V)
+versions.
+
+Pin Configurations                                                                          2-Wire, 32K
+                                                                                            Serial E2PROM
+Pin Name  Function            8-Pin TSSOP
+A0 - A2   Address Inputs                                                                                            Rev. 0336K–SEEPR–7/03
+SDA       Serial Data            A0 1     8 VCC
+SCL       Serial Clock Input     A1 2     7 WP                                                                                      1
+WP        Write Protect          A2 3     6 SCL
+                              GND 4       5 SDA
+
+          8-Pin PDIP          8-Pin SOIC
+
+   A0 1   8 VCC                  A0 1  8 VCC
+   A1 2   7 WP                   A1 2  7 WP
+   A2 3   6 SCL                  A2 3  6 SCL
+GND 4     5 SDA               GND 4    5 SDA
+Absolute Maximum Ratings*                                                           *NOTICE:  Stresses beyond those listed under “Absolute
+                                                                                              Maximum Ratings” may cause permanent dam-
+  Operating Temperature.................................. -55°C to +125°C                     age to the device. This is a stress rating only and
+  Storage Temperature ..................................... -65°C to +150°C                   functional operation of the device at these or any
+  Voltage on Any Pin                                                                          other conditions beyond those indicated in the
+  with Respect to Ground .....................................-1.0V to +7.0V                  operational sections of this specification is not
+  Maximum Operating Voltage .......................................... 6.25V                  implied. Exposure to absolute maximum rating
+  DC Output Current........................................................ 5.0 mA            conditions for extended periods may affect
+                                                                                              device reliability.
+Block Diagram
+
+2 AT24C32/64
+
+                                                                                              0336K–SEEPR–7/03
+                 AT24C32/64
+
+Pin Description  SERIAL CLOCK (SCL): The SCL input is used to positive edge clock data into each
+                 EEPROM device and negative edge clock data out of each device.
+
+                 SERIAL DATA (SDA): The SDA pin is bidirectional for serial data transfer. This pin is
+                 open-drain driven and may be wire-ORed with any number of other open-drain or open
+                 collector devices.
+
+                 DEVICE/PAGE ADDRESSES (A2, A1, A0): The A2, A1 and A0 pins are device address
+                 inputs that are hard wired or left not connected for hardware compatibility with
+                 AT24C16. When the pins are hardwired, as many as eight 32K/64K devices may be
+                 addressed on a single bus system (device addressing is discussed in detail under the
+                 Device Addressing section). When the pins are not hardwired, the default A2, A1, and A0
+                 are zero.
+
+                 WRITE PROTECT (WP): The write protect input, when tied to GND, allows normal write
+                 operations. When WP is tied high to VCC, all write operations to the upper quandrant
+                 (8/16K bits) of memory are inhibited. If left unconnected, WP is internally pulled down to
+                 GND.
+
+Memory Organization AT24C32/64, 32K/64K SERIAL EEPROM: The 32K/64K is internally organized as 256
+
+                                               pages of 32 bytes each. Random word addressing requires a 12/13 bit data word
+                                               address.
+
+                                                                                                                                                                    3
+
+0336K–SEEPR–7/03
+Pin Capacitance(1)
+
+Applicable over recommended operating range from TA = 25°C, f = 1.0 MHz, VCC = +1.8V.
+
+Symbol Test Condition                                                  Max                  Units       Conditions
+                                                                                              pF         VI/O = 0V
+CI/O    Input/Output Capacitance (SDA)                                      8                 pF          VIN = 0V
+
+CIN     Input Capacitance (A0, A1, A2, SCL)                                 6
+
+Note: 1. This parameter is characterized and is not 100% tested.
+
+DC Characteristics
+
+Applicable over recommended operating range from: TAI = -40°C to +85°C, VCC = +1.8V to +5.5V, TAC = 0°C to +70°C,
+VCC = +1.8V to +5.5V (unless otherwise noted).
+
+Symbol Parameter                 Test Condition                        Min             Typ         Max  Units
+
+VCC1    Supply Voltage                                                 1.8                         5.5  V
+
+VCC2    Supply Voltage                                                 2.5                         5.5  V
+
+VCC3    Supply Voltage                                                 2.7                         5.5  V
+
+VCC4    Supply Voltage                                                 4.5                         5.5  V
+
+ICC1    Supply Current           VCC = 5.0V         READ at 100 kHz                    0.4         1.0  mA
+
+ICC2    Supply Current           VCC = 5.0V         WRITE at 100 kHz                   2.0         3.0  mA
+
+        Standby Current          VCC = 1.8V                                                        0.1  µA
+                  (1.8V option)  VCC = 5.5V
+ISB1                                                VIN = VCC or VSS                               2.0
+
+        Standby Current          VCC = 2.5V                                                        0.5  µA
+                  (2.5V option)  VCC = 5.5V
+ISB2                                                VIN = VCC or VSS                               2.0
+
+        Standby Current          VCC = 2.7V                                                        0.5  µA
+                  (2.7V option)  VCC = 5.5V
+ISB3                                                VIN = VCC or VSS                               2.0
+
+ISB4    Standby Current          VCC = 4.5 - 5.5V VIN = VCC or VSS                     20          35   µA
+                  (5V option)
+
+ILI     Input Leakage            VIN = VCC or VSS                                 0.10             3.0  µA
+        Current
+
+  ILO   Output Leakage           VOUT = VCC or VSS                                0.05             3.0  µA
+        Current
+  VIL
+  VIH   Input Low Level(1)                                                -0.6              VCC x 0.3   V
+  VOL2  Input High Level(1)                                            VCC x 0.7
+  VOL1                                                                                      VCC + 0.5   V
+Note:
+        Output Low Level         VCC = 3.0V         IOL = 2.1 mA                                   0.4  V
+
+        Output Low Level         VCC = 1.8V         IOL = 0.15 mA                                  0.2  V
+
+        1. VIL min and VIH max are reference only and are not tested.
+
+4 AT24C32/64
+
+                                                                                                        0336K–SEEPR–7/03
+                                                                                               AT24C32/64
+
+AC Characteristics
+
+Applicable over recommended operating range from TA = -40°C to +85°C, VCC = +1.8V to +5.5V, CL = 1 TTL Gate and 100
+pF (unless otherwise noted).
+
+                                                                     1.8-volt  2.7-, 2.5-volt     5.0-volt
+
+Symbol        Parameter                                           Min Max Min Max Min Max Units
+
+fSCL          Clock Frequency, SCL                                     100          100             400     kHz
+tLOW          Clock Pulse Width Low
+tHIGH         Clock Pulse Width High                              4.7          4.7             1.2          µs
+tI            Noise Suppression Time(1)
+tAA           Clock Low to Data Out Valid                         4.0          4.0             0.6          µs
+              Time the bus must be free
+tBUF          before a new transmission can start(1)                   100          100             50      ns
+
+                                                                  0.1  4.5     0.1  4.5        0.1  0.9     µs
+
+                                                                  4.7          4.7             1.2          µs
+
+tHD.STA       Start Hold Time                                     4.0          4.0             0.6          µs
+
+tSU.STA       Start Set-up Time                                   4.7          4.7             0.6          µs
+
+tHD.DAT       Data In Hold Time                                   0            0               0            µs
+
+tSU.DAT       Data In Set-up Time                                 200          200             100          ns
+tR            Inputs Rise Time(1)
+tF            Inputs Fall Time(1)                                      1.0          1.0             0.3     µs
+
+                                                                       300          300             300     ns
+
+tSU.STO       Stop Set-up Time                                    4.7          4.7             0.6          µs
+
+tDH           Data Out Hold Time                                  100          100             50           ns
+
+tWR           Write Cycle Time                                         20           10              10      ms
+
+Endurance(1)  5.0V, 25°C, Page Mode                               1M           1M              1M           Write
+                                                                                                            Cycles
+
+Note: 1. This parameter is characterized and is not 100% tested.
+
+                                                                                                                                                                    5
+
+0336K–SEEPR–7/03
+Device Operation  CLOCK and DATA TRANSITIONS: The SDA pin is normally pulled high with an exter-
+                  nal device. Data on the SDA pin may change only during SCL low time periods (refer to
+                  Data Validity timing diagram). Data changes during SCL high periods will indicate a start
+                  or stop condition as defined below.
+
+                  START CONDITION: A high-to-low transition of SDA with SCL high is a start condition
+                  which must precede any other command (refer to Start and Stop Definition timing
+                  diagram).
+
+                  STOP CONDITION: A low-to-high transition of SDA with SCL high is a stop condition.
+                  After a read sequence, the stop command will place the EEPROM in a standby power
+                  mode (refer to Start and Stop Definition timing diagram).
+
+                  ACKNOWLEDGE: All addresses and data words are serially transmitted to and from the
+                  EEPROM in 8-bit words. The EEPROM sends a zero during the ninth clock cycle to
+                  acknowledge that it has received each word.
+
+                  STANDBY MODE: The AT24C32/64 features a low power standby mode which is
+                  enabled: a) upon power-up and b) after the receipt of the STOP bit and the completion
+                  of any internal operations.
+
+                  MEMORY RESET: After an interruption in protocol, power loss or system reset, any 2-
+                  wire part can be reset by following these steps:
+
+                  (a) Clock up to 9 cycles, (b) look for SDA high in each cycle while SCL is high and then
+                  (c) create a start condition as SDA is high.
+
+6 AT24C32/64
+
+                  0336K–SEEPR–7/03
+                                                            AT24C32/64
+
+Bus Timing
+SCL: Serial Clock, SDA: Serial Data I/O
+
+Write Cycle Timing
+SCL: Serial Clock, SDA: Serial Data I/O
+
+                            SCL
+
+SDA  8th BIT  ACK
+
+     WORDn                   STOP
+                         CONDITION
+                                         twr(1)
+
+                                                    START
+                                                 CONDITION
+
+Note: 1. The write cycle time tWR is the time from a valid stop condition of a write sequence to the end of the internal clear/write cycle.
+
+                                                                                                                                                                    7
+
+0336K–SEEPR–7/03
+Data Validity
+Start and Stop Definition
+Output Acknowledge
+
+8 AT24C32/64
+
+                           0336K–SEEPR–7/03
+                   AT24C32/64
+
+Device Addressing  The 32K/64K EEPROM requires an 8-bit device address word following a start condition
+Write Operations   to enable the chip for a read or write operation (refer to Figure 1). The device address
+                   word consists of a mandatory one, zero sequence for the first four most significant bits
+                   as shown. This is common to all 2-wire EEPROM devices.
+
+                   The 32K/64K uses the three device address bits A2, A1, A0 to allow as many as eight
+                   devices on the same bus. These bits must compare to their corresponding hardwired
+                   input pins. The A2, A1, and A0 pins use an internal proprietary circuit that biases them
+                   to a logic low condition if the pins are allowed to float.
+
+                   The eighth bit of the device address is the read/write operation select bit. A read opera-
+                   tion is initiated if this bit is high and a write operation is initiated if this bit is low.
+
+                   Upon a compare of the device address, the EEPROM will output a zero. If a compare is
+                   not made, the device will return to standby state.
+
+                   NOISE PROTECTION: Special internal circuitry placed on the SDA and SCL pins pre-
+                   vent small noise spikes from activating the device. A low-VCC detector (5-volt option)
+                   resets the device to prevent data corruption in a noisy environment.
+
+                   DATA SECURITY: The AT24C32/64 has a hardware data protection scheme that allows
+                   the user to write protect the upper quadrant (8/16K bits) of memory when the WP pin is
+                   at VCC.
+
+                   BYTE WRITE: A write operation requires two 8-bit data word addresses following the
+                   device address word and acknowledgment. Upon receipt of this address, the EEPROM
+                   will again respond with a zero and then clock in the first 8-bit data word. Following
+                   receipt of the 8-bit data word, the EEPROM will output a zero and the addressing
+                   device, such as a microcontroller, must terminate the write sequence with a stop condi-
+                   tion. At this time the EEPROM enters an internally-timed write cycle, tWR, to the
+                   nonvolatile memory. All inputs are disabled during this write cycle and the EEPROM will
+                   not respond until the write is complete (refer to Figure 2).
+
+                   PAGE WRITE: The 32K/64K EEPROM is capable of 32-byte page writes.
+
+                   A page write is initiated the same way as a byte write, but the microcontroller does not
+                   send a stop condition after the first data word is clocked in. Instead, after the EEPROM
+                   acknowledges receipt of the first data word, the microcontroller can transmit up to 31
+                   more data words. The EEPROM will respond with a zero after each data word received.
+                   The microcontroller must terminate the page write sequence with a stop condition (refer
+                   to Figure 3).
+
+                   The data word address lower 5 bits are internally incremented following the receipt of
+                   each data word. The higher data word address bits are not incremented, retaining the
+                   memory page row location. When the word address, internally generated, reaches the
+                   page boundary, the following byte is placed at the beginning of the same page. If more
+                   than 32 data words are transmitted to the EEPROM, the data word address will “roll
+                   over” and previous data will be overwritten.
+
+                   ACKNOWLEDGE POLLING: Once the internally-timed write cycle has started and the
+                   EEPROM inputs are disabled, acknowledge polling can be initiated. This involves send-
+                   ing a start condition followed by the device address word. The read/write bit is
+                   representative of the operation desired. Only if the internal write cycle has completed
+                   will the EEPROM respond with a zero, allowing the read or write sequence to continue.
+
+                                                                                                                                                                    9
+
+0336K–SEEPR–7/03
+Read        Read operations are initiated the same way as write operations with the exception that the
+Operations  read/write select bit in the device address word is set to one. There are three read operations:
+            current address read, random address read and sequential read.
+
+            CURRENT ADDRESS READ: The internal data word address counter maintains the last
+            address accessed during the last read or write operation, incremented by one. This address
+            stays valid between operations as long as the chip power is maintained. The address “roll
+            over” during read is from the last byte of the last memory page, to the first byte of the first
+            page. The address “roll over” during write is from the last byte of the current page to the first
+            byte of the same page.
+
+            Once the device address with the read/write select bit set to one is clocked in and acknowl-
+            edged by the EEPROM, the current address data word is serially clocked out. The
+            microcontroller does not respond with an input zero but does generate a following stop condi-
+            tion (refer to Figure 4).
+
+            RANDOM READ: A random read requires a “dummy” byte write sequence to load in the data
+            word address. Once the device address word and data word address are clocked in and
+            acknowledged by the EEPROM, the microcontroller must generate another start condition.
+            The microcontroller now initiates a current address read by sending a device address with the
+            read/write select bit high. The EEPROM acknowledges the device address and serially clocks
+            out the data word. The microcontroller does not respond with a zero but does generate a fol-
+            lowing stop condition (refer to Figure 5).
+
+            SEQUENTIAL READ: Sequential reads are initiated by either a current address read or a ran-
+            dom address read. After the microcontroller receives a data word, it responds with an
+            acknowledge. As long as the EEPROM receives an acknowledge, it will continue to increment
+            the data word address and serially clock out sequential data words. When the memory
+            address limit is reached, the data word address will “roll over” and the sequential read will con-
+            tinue. The sequential read operation is terminated when the microcontroller does not respond
+            with a zero but does generate a following stop condition (refer to Figure 6).
+
+10 AT24C32/64
+
+               0336K–SEEPR–7/03
+Figure 1. Device Address                        AT24C32/64
+Figure 2. Byte Write
+                                                                            11
+Figure 3. Page Write
+Note: 1. * = DON’T CARE bits
+
+            2. † = DON’T CARE bits for the 32K
+
+0336K–SEEPR–7/03
+Figure 4. Current Address Read
+Figure 5. Random Read
+Note: 1. * = DON’T CARE bits
+Figure 6. Sequential Read
+
+12 AT24C32/64
+
+                                0336K–SEEPR–7/03
+                                                                                  AT24C32/64
+
+AT24C32 Ordering Information
+
+Ordering Code                              Package                                Operation Range
+
+AT24C32-10PI-2.7                           8P3                                    Industrial
+AT24C32N-10SI-2.7
+AT24C32W-10SI-2.7                          8S1                                    (-40°C to 85°C)
+
+                                           8S2
+
+AT24C32-10PI-1.8                           8P3                                    Industrial
+AT24C32N-10SI-1.8
+                                           8S1                                    (-40°C to 85°C)
+
+AT24C32W-10SI-1.8                          8S2
+
+Note: For 2.7V devices used in the 4.5V to 5.5V range, please refer to performance values in the AC and DC characteristics tables.
+
+                                           Package Type
+
+8P3            8-lead, 0.300” Wide, Plastic Dual Inline Package (PDIP)
+
+8S1            8-lead, 0.150” Wide, Plastic Gull Wing Small Outline (JEDEC SOIC)
+
+8S2            8-lead, 0.200” Wide, Plastic Gull Wing Small Outline (EIAJ SOIC)
+
+                                           Options
+
+-2.7           Low Voltage (2.7V to 5.5V)
+
+-1.8           Low Voltage (1.8V to 5.5V)
+
+                                                                                                                                                                  13
+
+0336K–SEEPR–7/03
+AT24C64 Ordering Information
+
+Ordering Code                              Package                                Operation Range
+
+AT24C64-10PI-2.7                           8P3                                    Industrial
+AT24C64N-10SI-2.7
+AT24C64W-10SI-2.7                          8S1                                    (-40°C to 85°C)
+AT24C64-10TI-2.7
+                                           8S2
+
+                                           8A2
+
+AT24C64-10PI-1.8                           8P3                                    Industrial
+AT24C64N-10SI-1.8
+AT24C64W-10SI-1.8                          8S1                                    (-40°C to 85°C)
+AT24C64-10TI-1.8
+                                           8S2
+
+                                           8A2
+
+Note: For 2.7V devices used in the 4.5V to 5.5V range, please refer to performance values in the AC and DC characteristics tables.
+
+                                           Package Type
+
+8P3            8-lead, 0.300” Wide, Plastic Dual Inline Package (PDIP)
+
+8S1            8-lead, 0.150” Wide, Plastic Gull Wing Small Outline (JEDEC SOIC)
+
+8S2            8-lead, 0.200” Wide, Plastic Gull Wing Small Outline (EIAJ SOIC)
+
+8A2            8-lead, 0.170” Wide, Thin Shrink Small Outline Package (TSSOP)
+
+                                           Options
+
+-2.7           Low Voltage (2.7V to 5.5V)
+
+-1.8           Low Voltage (1.8V to 5.5V)
+
+14 AT24C32/64
+
+                                                                                                   0336K–SEEPR–7/03
+Packaging Information                                                                      AT24C32/64
+
+8P3 – PDIP                                                                   E
+                                                                             E1
+                                                                    1
+
+                                   N                                         c
+                                                                                             eA
+                Top View
+                                                                                      End View
+
+                D                                                                                                   COMMON DIMENSIONS
+                                                                                                                    (Unit of Measure = inches)
+                                 e
+
+        D1                                                             A2 A  SYMBOL                                 MIN NOM MAX                      NOTE
+                                                                                 A                                                            0.210   2
+                                    b2                                 L         A2
+                                                                                 b                                  0.115 0.130 0.195                 5
+          b3                        b                                            b2                                 0.014 0.018 0.022                 6
+                                                                                 b3                                 0.045 0.060 0.070                 6
+        4 PLCS                                                                   c                                  0.030 0.039 0.045
+                                                                                 D                                  0.008 0.010 0.014                 3
+                Side View                                                        D1                                 0.355 0.365 0.400                 3
+                                                                                 E                                  0.005                             4
+                                                                                 E1                                 0.300 0.310 0.325                 3
+                                                                                 e                                  0.240 0.250 0.280
+                                                                                 eA                                                                   4
+                                                                                 L                                          0.100 BSC                 2
+                                                                                                                            0.300 BSC
+                                                                                                                    0.115 0.130 0.150
+
+Notes:  1. This drawing is for general information only; refer to JEDEC Drawing MS-001, Variation BA for additional information.
+        2. Dimensions A and L are measured with the package seated in JEDEC seating plane Gauge GS-3.
+        3. D, D1 and E1 dimensions do not include mold Flash or protrusions. Mold Flash or protrusions shall not exceed 0.010 inch.
+        4. E and eA measured with the leads constrained to be perpendicular to datum.
+        5. Pointed or rounded lead tips are preferred to ease insertion.
+        6. b2 and b3 maximum dimensions do not include Dambar protrusions. Dambar protrusions shall not exceed 0.010 (0.25 mm).
+
+                                                                                                                                                     01/09/02
+
+                                                                       TITLE                                        DRAWING NO. REV.
+                                                                       8P3, 8-lead, 0.300" Wide Body, Plastic Dual
+           2325 Orchard Parkway                                        In-line Package (PDIP)                       8P3                                    B
+        R San Jose, CA 95131
+
+                                                                                                                                                                  15
+
+0336K–SEEPR–7/03
+8S1 – JEDEC SOIC
+
+                  3       2  1
+
+                                                   H
+
+                                               N
+
+Top View
+
+e                            B
+
+                                                   A
+
+                     D                                        COMMON DIMENSIONS
+                                                               (Unit of Measure = mm)
+             Side View
+                                                      SYMBOL  MIN NOM MAX                                                                NOTE
+A2                                                         A
+                                                C          B                                         –  –                          1.75
+                                                           C
+ L                                                         D                                         –  –                          0.51
+                      E                                    E
+                                                           e                                         –  –                          0.25
+             End View                                      H
+                                                           L                                         –  –                          5.00
+
+                                                                                                     –  –                          4.00
+
+                                                                                                        1.27 BSC
+
+                                                                                                     –  –                          6.20
+
+                                                                                                     –  –                          1.27
+
+Note: This drawing is for general information only. Refer to JEDEC Drawing MS-012 for proper dimensions, tolerances, datums, etc.
+
+                                                                                                                                         10/10/01
+
+    2325 Orchard Parkway                          TITLE                                                                            DRAWING NO. REV.
+R San Jose, CA 95131                              8S1, 8-lead (0.150" Wide Body), Plastic Gull Wing
+                                                                                                                                   8S1         A
+                                                  Small Outline (JEDEC SOIC)
+
+16 AT24C32/64
+
+                                                                                                                                         0336K–SEEPR–7/03
+                                                                                    AT24C32/64
+
+8S2 – EIAJ SOIC
+
+                 1
+
+                              H
+
+                                        N
+
+                 Top View
+
+e                        b
+
+                                           A
+
+                   D                                                                COMMON DIMENSIONS
+                                                                                     (Unit of Measure = mm)
+                 Side View
+
+A1                                            C  SYMBOL                             MIN NOM            MAX   NOTE
+                                                     A                              1.78               2.03
+    L                                                A1                             0.05               0.33   5
+               E                                     b                              0.35               0.51   5
+                                                     C                              0.18               0.25   2, 3
+          End View                                   D                              5.13               5.38
+                                                     E                              5.13               5.41   4
+                                                     H                              7.62               8.38
+                                                     L                              0.51               0.89
+                                                     e
+                                                                                             1.27 BSC
+
+Notes: 1. This drawing is for general information only; refer to EIAJ Drawing EDR-7320 for additional information.
+          2. Mismatch of the upper and lower dies and resin burrs aren't included.
+          3. It is recommended that upper and lower cavities be equal. If they are different, the larger dimension shall be regarded.
+          4. Determines the true geometric position.
+          5. Values b,C apply to pb/Sn solder plated terminal. The standard thickness of the solder layer shall be 0.010 +0.010/-0.005 mm.
+
+                                                                                                                                                                   5/2/02
+
+                                           TITLE                                    DRAWING NO. REV.
+                                           8S2, 8-lead, 0.209" Body, Plastic Small
+   2325 Orchard Parkway                    Outline Package (EIAJ)                                      8S2          B
+R San Jose, CA 95131
+
+                                                                                                                                                                  17
+
+0336K–SEEPR–7/03
+8A2 – TSSOP
+
+                                3 21
+
+        Pin 1 indicator
+          this corner
+
+                                      E1          E
+
+                                                                                           L1
+
+                    N                                                         L
+
+        Top View                                                  End View
+
+                                                                          COMMON DIMENSIONS
+                                                                           (Unit of Measure = mm)
+
+                                             A                    SYMBOL  MIN                 NOM    MAX   NOTE
+                      b                                              D    2.90                3.00   3.10   2, 5
+                                                                     E                     6.40 BSC         3, 5
+                              e       A2                             E1   4.30                4.40   4.50
+                                                                     A      –                        1.20    4
+                      D                                              A2                         –    1.05
+                                                                     b    0.80                1.00   0.30
+        Side View                                                    e    0.19
+                                                                     L                          –    0.75
+                                                                     L1   0.45             0.65 BSC
+
+                                                                                              0.60
+                                                                                           1.00 REF
+
+Notes:  1. This drawing is for general information only. Refer to JEDEC Drawing MO-153, Variation AA, for proper dimensions, tolerances,
+
+        datums, etc.
+
+        2. Dimension D does not include mold Flash, protrusions or gate burrs. Mold Flash, protrusions and gate burrs shall not exceed
+
+        0.15 mm (0.006 in) per side.
+
+        3. Dimension E1 does not include inter-lead Flash or protrusions. Inter-lead Flash and protrusions shall not exceed 0.25 mm
+
+        (0.010 in) per side.
+
+        4. Dimension b does not include Dambar protrusion. Allowable Dambar protrusion shall be 0.08 mm total in excess of the
+
+        b dimension at maximum material condition. Dambar cannot be located on the lower radius of the foot. Minimum space between
+
+        protrusion and adjacent lead is 0.07 mm.
+
+        5. Dimension D and E1 to be determined at Datum Plane H.                                                                        5/30/02
+
+                                                TITLE                                                DRAWING NO. REV.
+                                                8A2, 8-lead, 4.4 mm Body, Plastic
+          2325 Orchard Parkway                                                                             8A2                            B
+        R San Jose, CA 95131                    Thin Shrink Small Outline Package (TSSOP)
+
+18 AT24C32/64
+
+                                                                                                                                0336K–SEEPR–7/03
+Atmel Corporation             Atmel Operations                       RF/Automotive
+                                                                       Theresienstrasse 2
+  2325 Orchard Parkway        Memory                                   Postfach 3535
+  San Jose, CA 95131            2325 Orchard Parkway                   74025 Heilbronn, Germany
+  Tel: 1(408) 441-0311          San Jose, CA 95131                     Tel: (49) 71-31-67-0
+  Fax: 1(408) 487-2600          Tel: 1(408) 441-0311                   Fax: (49) 71-31-67-2340
+                                Fax: 1(408) 436-4314                   1150 East Cheyenne Mtn. Blvd.
+Regional Headquarters                                                  Colorado Springs, CO 80906
+                              Microcontrollers                         Tel: 1(719) 576-3300
+Europe                          2325 Orchard Parkway                   Fax: 1(719) 540-1759
+  Atmel Sarl                    San Jose, CA 95131
+  Route des Arsenaux 41         Tel: 1(408) 441-0311                 Biometrics/Imaging/Hi-Rel MPU/
+  Case Postale 80               Fax: 1(408) 436-4314                 High Speed Converters/RF Datacom
+  CH-1705 Fribourg
+  Switzerland                   La Chantrerie                          Avenue de Rochepleine
+  Tel: (41) 26-426-5555         BP 70602                               BP 123
+  Fax: (41) 26-426-5500         44306 Nantes Cedex 3, France           38521 Saint-Egreve Cedex, France
+                                Tel: (33) 2-40-18-18-18                Tel: (33) 4-76-58-30-00
+Asia                            Fax: (33) 2-40-18-19-60                Fax: (33) 4-76-58-34-80
+  Room 1219
+  Chinachem Golden Plaza      ASIC/ASSP/Smart Cards                  e-mail
+  77 Mody Road Tsimshatsui      Zone Industrielle                    literature@atmel.com
+  East Kowloon                  13106 Rousset Cedex, France          Web Site
+  Hong Kong                     Tel: (33) 4-42-53-60-00              http://www.atmel.com
+  Tel: (852) 2721-9778          Fax: (33) 4-42-53-60-01
+  Fax: (852) 2722-1369
+                                1150 East Cheyenne Mtn. Blvd.
+Japan                           Colorado Springs, CO 80906
+  9F, Tonetsu Shinkawa Bldg.    Tel: 1(719) 576-3300
+  1-24-8 Shinkawa               Fax: 1(719) 540-1759
+  Chuo-ku, Tokyo 104-0033
+  Japan                         Scottish Enterprise Technology Park
+  Tel: (81) 3-3523-3551         Maxwell Building
+  Fax: (81) 3-3523-7581         East Kilbride G75 0QR, Scotland
+                                Tel: (44) 1355-803-000
+                                Fax: (44) 1355-242-743
+
+Disclaimer: Atmel Corporation makes no warranty for the use of its products, other than those expressly contained in the Company’s standard
+warranty which is detailed in Atmel’s Terms and Conditions located on the Company’s web site. The Company assumes no responsibility for any
+errors which may appear in this document, reserves the right to change devices or specifications detailed herein at any time without notice, and
+does not make any commitment to update the information contained herein. No licenses to patents or other intellectual property of Atmel are
+granted by the Company in connection with the sale of Atmel products, expressly or by implication. Atmel’s products are not authorized for use
+as critical components in life support devices or systems.
+
+© Atmel Corporation 2003. All rights reserved. Atmel® and combinations thereof, are the registered
+trademarks of Atmel Corporation or its subsidiaries. Other terms and product names may be the trademarks of
+others.
+
+                                                                                                             Printed on recycled paper.
+
+                                                                                                             0336K–SEEPR–7/03  xM
+

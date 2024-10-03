@@ -1,0 +1,1738 @@
+                        AT24C128C/AT24C256C
+
+           I²C Automotive Temperature Serial EEPROM
+            128‑Kbit (16,384 x 8), 256‑Kbit (32,768 x 8)
+
+Features
+
+  • Low-Voltage, Medium-Voltage Operation:
+         – Grade 1, VCC = 2.5V to 5.5V
+         – Grade 3, VCC = 1.7V to 5.5V
+
+  • Internally Organized as 16,384 x 8 (128K) or 32,768 x 8 (256K)
+  • Extended Temperature Range (Grade 1 and Grade 3 as defined in AEC-Q100):
+
+         – Grade 1 Temperature Range: -40°C to +125°C
+         – Grade 3 Temperature Range: -40°C to +85°C
+  • I2C-Compatible (Two-Wire) Serial Interface:
+         – 100 kHz Standard mode
+         – 400 kHz Fast mode
+  • Schmitt Triggers, Filtered Inputs for Noise Suppression
+  • Bidirectional Data Transfer Protocol
+  • Write-Protect Pin for Hardware Data Protection
+  • Ultra Low Active Current (3 mA maximum) and Standby Current (6 μA maximum)
+  • 64-Byte Page Write Mode:
+         – Partial page writes allowed
+  • Random and Sequential Read Modes
+  • Self-Timed Write Cycle within 5 ms Maximum
+  • Automotive AEC-Q100 Qualified
+  • High Reliability:
+         – Endurance: 1,000,000 write cycles
+         – Data retention: 100 years
+  • Green Package Options (Lead-free/Halide-free/RoHS compliant)
+
+Packages
+
+  • 8-Lead SOIC, 8-Lead TSSOP and 8-Pad UDFN
+
+© 2020 Microchip Technology Inc.  Datasheet  DS20006270B-page 1
+                                                    AT24C128C/AT24C256C
+
+Table of Contents
+
+Features......................................................................................................................................................... 1
+
+Packages........................................................................................................................................................1
+
+1. Package Types (not to scale)..................................................................................................................4
+
+2. Pin Descriptions...................................................................................................................................... 5
+      2.1. Device Address Inputs (A0, A1, A2).............................................................................................5
+      2.2. Ground......................................................................................................................................... 5
+      2.3. Serial Data (SDA).........................................................................................................................5
+      2.4. Serial Clock (SCL)........................................................................................................................5
+      2.5. Write-Protect (WP)....................................................................................................................... 5
+      2.6. Device Power Supply (VCC)......................................................................................................... 6
+
+3. Description.............................................................................................................................................. 7
+      3.1. System Configuration Using Two-Wire Serial EEPROMs ........................................................... 7
+      3.2. Block Diagram.............................................................................................................................. 8
+
+4. Electrical Characteristics.........................................................................................................................9
+      4.1. Absolute Maximum Ratings..........................................................................................................9
+      4.2. DC and AC Operating Range.......................................................................................................9
+      4.3. DC Characteristics....................................................................................................................... 9
+      4.4. AC Characteristics......................................................................................................................10
+      4.5. Electrical Specifications..............................................................................................................11
+
+5. Device Operation and Communication................................................................................................. 13
+      5.1. Clock and Data Transition Requirements...................................................................................13
+      5.2. Start and Stop Conditions.......................................................................................................... 13
+      5.3. Acknowledge and No-Acknowledge...........................................................................................14
+      5.4. Standby Mode............................................................................................................................ 14
+      5.5. Software Reset...........................................................................................................................14
+
+6. Memory Organization............................................................................................................................16
+      6.1. Device Addressing..................................................................................................................... 16
+
+7. Write Operations................................................................................................................................... 18
+      7.1. Byte Write...................................................................................................................................18
+      7.2. Page Write..................................................................................................................................18
+      7.3. Acknowledge Polling.................................................................................................................. 19
+      7.4. Write Cycle Timing..................................................................................................................... 19
+      7.5. Write Protection..........................................................................................................................20
+
+8. Read Operations................................................................................................................................... 21
+      8.1. Current Address Read................................................................................................................21
+      8.2. Random Read............................................................................................................................ 21
+      8.3. Sequential Read.........................................................................................................................22
+
+9. Device Default Condition from Microchip.............................................................................................. 23
+
+© 2020 Microchip Technology Inc.  Datasheet  DS20006270B-page 2
+                                                    AT24C128C/AT24C256C
+
+10. Packaging Information.......................................................................................................................... 24
+      10.1. Package Marking Information.....................................................................................................24
+
+11. Revision History.................................................................................................................................... 33
+The Microchip Website.................................................................................................................................34
+Product Change Notification Service............................................................................................................34
+Customer Support........................................................................................................................................ 34
+Product Identification System.......................................................................................................................35
+Microchip Devices Code Protection Feature................................................................................................ 35
+Legal Notice................................................................................................................................................. 36
+Trademarks.................................................................................................................................................. 36
+Quality Management System....................................................................................................................... 37
+Worldwide Sales and Service.......................................................................................................................38
+
+© 2020 Microchip Technology Inc.  Datasheet  DS20006270B-page 3
+                                                          AT24C128C/AT24C256C
+
+                                                               Package Types (not to scale)
+
+1. Package Types (not to scale)
+
+                                       8-Lead SOIC/TSSOP
+                                              (Top View)
+
+                                  A0   1  8               Vcc
+
+                                  A1 2    7               WP
+
+                                  A2   3  6               SCL
+
+                                  GND  4  5               SDA
+
+                                          8-Pad UDFN
+                                           (Top View)
+
+                                    A0 1               8 Vcc
+                                    A1 2               7 WP
+                                    A2 3               6 SCL
+                                  GND 4                5 SDA
+
+© 2020 Microchip Technology Inc.          Datasheet            DS20006270B-page 4
+                                                                                AT24C128C/AT24C256C
+
+                                                                                                      Pin Descriptions
+
+2. Pin Descriptions
+
+              The descriptions of the pins are listed in Table 2-1.
+
+Table 2-1. Pin Function Table
+
+Name   8-Lead SOIC                8-Lead TSSOP                       8-Pad UDFN(1)                   Function
+A0(2)          1                           1                                  1     Device Address Input
+A1(2)          2                           2                                  2     Device Address Input
+A2(2)          3                           3                                  3     Device Address Input
+GND            4                           4                                  4     Ground
+ SDA           5                           5                                  5     Serial Data
+ SCL           6                           6                                  6     Serial Clock
+WP(2)          7                           7                                  7     Write-Protect
+ VCC           8                           8                                  8     Device Power Supply
+
+Notes: 
+
+  1. The exposed pad on this package can be connected to GND or left floating.
+
+  2. If the A0, A1, A2 or WP pins are not driven, they are internally pulled down to GND. In order to operate in a
+         wide variety of application environments, the pull-down mechanism is intentionally designed to be somewhat
+         strong. Once this pin is biased above the CMOS input buffer’s trip point (~0.5 x VCC), the pull‑down
+         mechanism disengages. Microchip recommends connecting this pin to a known state whenever possible.
+
+2.1 Device Address Inputs (A0, A1, A2)
+
+              The A0, A1 and A2 pins are device address inputs that are hard-wired (directly to GND or to VCC) for compatibility
+              with other two-wire Serial EEPROM devices. When the pins are hard-wired, as many as eight devices may be
+              addressed on a single bus system. A device is selected when a corresponding hardware and software match is true.
+              If these pins are left floating, the A0, A1 and A2 pins will be internally pulled down to GND. However, due to
+              capacitive coupling that may appear in customer applications, Microchip recommends always connecting the address
+              pins to a known state. When using a pull‑up resistor, Microchip recommends using 10 kΩ or less.
+
+2.2 Ground
+
+              The ground reference for the power supply. GND should be connected to the system ground.
+
+2.3 Serial Data (SDA)
+
+              The SDA pin is an open-drain bidirectional input/output pin used to serially transfer data to and from the device. The
+              SDA pin must be pulled high using an external pull-up resistor (not to exceed 10 kΩ in value) and may be wire-ORed
+              with any number of other open-drain or open-collector pins from other devices on the same bus.
+
+2.4 Serial Clock (SCL)
+
+              The SCL pin is used to provide a clock to the device and to control the flow of data to and from the device. Command
+              and input data present on the SDA pin is always latched in on the rising edge of SCL, while output data on the SDA
+              pin is clocked out on the falling edge of SCL. The SCL pin must either be forced high when the serial bus is idle or
+              pulled high using an external pull-up resistor.
+
+2.5 Write-Protect (WP)
+
+              The write-protect input, when connected to GND, allows normal write operations. When the WP pin is connected
+              directly to VCC, all write operations to the protected memory are inhibited.
+
+© 2020 Microchip Technology Inc.                                     Datasheet                          DS20006270B-page 5
+                                             AT24C128C/AT24C256C
+
+                                                                   Pin Descriptions
+
+If the pin is left floating, the WP pin will be internally pulled down to GND. However, due to capacitive coupling that
+may appear in customer applications, Microchip recommends always connecting the WP pin to a known state. When
+using a pull‑up resistor, Microchip recommends using 10 kΩ or less.
+
+Table 2-2. Write-Protect
+
+WP Pin Status                                Part of the Array Protected
+     At VCC                                              Full Array
+     At GND
+                                               Normal Write Operations
+
+2.6 Device Power Supply (VCC)
+
+              The Device Power Supply (VCC) pin is used to supply the source voltage to the device. Operations at invalid VCC
+              voltages may produce spurious results and should not be attempted.
+
+© 2020 Microchip Technology Inc.  Datasheet  DS20006270B-page 6
+                                                                        AT24C128C/AT24C256C
+
+                                                                                                      Description
+
+3. Description
+
+              The AT24C128C/AT24C256C provides 131,072/262,144 bits of Serial Electrically Erasable and Programmable Read-
+              Only Memory (EEPROM) organized as 16,384/32,768 words of 8 bits each. This device is optimized for use in many
+              automotive applications where low-power and low-voltage operations are essential. The device is available
+              in space‑saving 8‑lead SOIC, 8‑lead TSSOP and 8‑pad UDFN packages. All packages operate from 1.7V to 5.5V for
+              Grade 3 and 2.5V to 5.5V for Grade 1.
+
+3.1  System Configuration Using Two-Wire Serial EEPROMs
+
+     VCC                        RPUP(max) = tR(max)
+                                                0.8473 x CL
+                 VCC
+                           SCL  RPUP(min) = VCC - VOL(max)
+                          SDA                         IOL
+                           WP
+                                       A0   VCC              A0         VCC   A0   VCC
+      I2C Bus Master:
+       Microcontroller                 A1 Slave 0 WP         A1 Slave 1 WP    A1 Slave 7 WP
+                                       A2 AT24CXXX SDA       A2 AT24CXXX SDA  A2 AT24CXXX SDA
+                GND
+                                       GND  SCL              GND        SCL   GND  SCL
+
+     © 2020 Microchip Technology Inc.                        Datasheet            DS20006270B-page 7
+                                                                                AT24C128C/AT24C256C
+
+                                                                                                              Description
+
+3.2 Block Diagram
+
+   A0               Hardware                                           Memory      Power-on             VCC
+   A1                Address                                       System Control    Reset              WP
+   A2              Comparator                                                                           SCL
+GND                                                                     Module     Generator            SDA
+                                   High-Voltage
+                               Generation Circuit
+
+                                  EEPROM Array                     Row Decoder                Write
+                                                                                           Protection
+                                          1 page
+                                  Column Decoder                                             Control
+
+                                    Data Register                                  Address Register
+                                                                                      and Counter
+                                                        Data & ACK
+                                          DOUT Input/Output Control                              Start
+                                                                                                 Stop
+                                                            DIN                               Detector
+
+© 2020 Microchip Technology Inc.                   Datasheet                                            DS20006270B-page 8
+                                                                           AT24C128C/AT24C256C
+
+                                                                                     Electrical Characteristics
+
+4. Electrical Characteristics
+
+4.1 Absolute Maximum Ratings
+
+Temperature under bias                                                         -55°C to +125°C
+
+Storage temperature                                                            -65°C to +150°C
+
+VCC                                                                            6.25V
+Voltage on any pin with respect to ground                                      -1.0V to +7.0V
+
+DC output current                                                              5.0 mA
+
+AT24C128C ESD protection                                                       >3 kV
+
+AT24C256C ESD protection                                                       >4 kV
+
+Note:  Stresses above those listed under “Absolute Maximum Ratings” may cause permanent damage to the device.
+This is a stress rating only and functional operation of the device at these or any other conditions above those
+indicated in the operation listings of this specification is not implied. Exposure to absolute maximum rating conditions
+for extended periods may affect device reliability.
+
+4.2 DC and AC Operating Range                              Automotive Grade 1         Automotive Grade 3
+                                                    -40°C to +125°C            -40°C to +85°C
+              Table 4-1. DC and AC Operating Range  2.5V to 5.5V               1.7V to 5.5V
+
+                             AT24C128C/AT24C256C
+               Operating Temperature (Case)
+               VCC Power Supply
+
+4.3 DC Characteristics
+
+              Table 4-2. DC Characteristics
+
+Parameter Symbol Minimum                            Typical(1)  Maximum Units          Test Conditions
+
+Supply   VCC1                                2.5    —           5.5            V Grade 1
+
+Voltage  VCC2                                1.7    —           5.5            V Grade 3
+
+Supply   ICC1                                —      0.4         1.0            mA VCC = 5.0V, Read at 400 kHz
+
+Current
+
+Supply   ICC2                                —      2.0         3.0            mA VCC = 5.0V, Write at 400 kHz
+
+Current
+
+Standby            ISB                       —      0.1         3.0            μA VCC = 1.7V, VIN = VCC or GND
+                                                    1.6
+Current                                      —      4.0         4.0            μA VCC = 2.5V, VIN = VCC or GND
+                                                    0.10
+                                             —                  6.0            μA VCC = 5.0V, VIN = VCC or GND
+
+Input              ILI                       —                  3.0            μA VIN = VCC or GND
+
+Leakage
+
+Current
+
+© 2020 Microchip Technology Inc.                                Datasheet                 DS20006270B-page 9
+                                                                       AT24C128C/AT24C256C
+
+                                                                                 Electrical Characteristics
+
+...........continued              Minimum       Typical(1)  Maximum           Units           Test Conditions
+  Parameter Symbol                     —           0.05         3.0            μA    VOUT = VCC or GND
+
+Output      ILO                       -0.6          —
+                                  VCC x 0.7         —
+Leakage                                             —
+                                       —            —
+Current                                —
+
+Input Low   VIL                                             VCC x 0.3         V Note 2
+                                                            VCC + 0.5
+Level
+                                                                0.2
+Input High  VIH                                                 0.4           V Note 2
+
+Level
+
+Output Low  VOL1                                                              V      VCC = 1.7V, IOL = 0.15 mA
+Level
+
+Output Low  VOL2                                                              V      VCC = 2.5V, IOL = 2.1 mA
+Level
+
+Note: 
+
+  1. Typical values characterized at TA = +25°C unless otherwise noted.
+  2. This parameter is characterized but is not 100% tested in production.
+
+4.4 AC Characteristics
+
+              Table 4-3. AC Characteristics(1)
+
+                   Parameter                    Symbol      Min.       Max.          Min.   Max.  Units
+Clock Frequency, SCL                                          —         100            —    400    kHz
+Clock Pulse Width Low                             fSCL      4,700        —           1,200   —      ns
+Clock Pulse Width High                            tLOW      4,000        —            600    —      ns
+Noise Suppression Time(2)                         tHIGH       —         100            —     50     ns
+Clock Low to Data Out Valid                                   —        4,500          100   900     ns
+Bus Free Time between Stop and Start                tI      4,700        —           1,200   —      ns
+Start Hold Time                                    tAA      4,000        —            600    —      ns
+Start Set-Up Time                                 tBUF      4,700        —            600    —      ns
+Data In Hold Time                               tHD.STA       0          —             0     —      ns
+Data In Set-up Time                              tSU.STA     200         —            100    —      ns
+Inputs Rise Time(3)                             tHD.DAT       —        1,000           —    300     ns
+Inputs Fall Time(3)                             tSU.DAT       —         300            —    300     ns
+Stop Set-Up Time                                    tR      4,700        —            600    —      ns
+Data Out Hold Time                                  tF       100         —             50    —      ns
+Write Cycle Time                                tSU.STO       —                        —           ms
+                                                   tDH                   5                    5
+                                                   tWR
+
+Notes: 
+
+  1. AC measurement conditions:
+
+           – CL: 100 pF
+           – RPUP (SDA bus line pull-up resistor to VCC): 1.3 kΩ (400 kHz)
+           – Input pulse voltages: 0.3 x VCC to 0.7 x VCC
+           – Input rise and fall times: ≤50 ns
+
+           – Input and output timing reference voltages: 0.5 x VCC
+  2. This parameter is characterized and is not 100% tested (TA = +25°C).
+  3. These parameters are determined through product characterization and are not 100% tested in production.
+
+© 2020 Microchip Technology Inc.                            Datasheet                       DS20006270B-page 10
+                                                                             AT24C128C/AT24C256C
+
+                                                                                       Electrical Characteristics
+
+         Figure 4-1.  Bus Timing
+
+                                                 tF  tHIGH        tLOW                     tR
+                                           tHD.STA       tHD.DAT                                 tSU.STO
+            SCL   tSU.STA                                                    tSU.DAT
+         SDA In
+
+                                                                  tAA                                     tBUF
+
+                                                     tDH
+
+         SDA Out
+
+4.5 Electrical Specifications
+
+4.5.1    Power-Up Requirements and Reset Behavior
+4.5.1.1  During a power-up sequence, the VCC supplied to the AT24C128C/AT24C256C should monotonically rise from GND
+         to the minimum VCC level, as specified in Table 4-1, with a slew rate no faster than 0.1 V/µs.
+
+         Device Reset
+         To prevent inadvertent write operations or any other spurious events from occurring during a power-up sequence, the
+         AT24C128C/AT24C256C includes a Power-on Reset (POR) circuit. Upon power-up, the device will not respond to
+         any commands until the VCC level crosses the internal voltage threshold (VPOR) that brings the device out of Reset
+         and into Standby mode.
+
+         The system designer must ensure the instructions are not sent to the device until the VCC supply has reached a
+         stable value greater than or equal to the minimum VCC level. Additionally, once the VCC is greater than or equal to the
+         minimum VCC level, the bus master must wait at least tPUP before sending the first command to the device. See Table
+         4-4 for the values associated with these power-up parameters.
+
+         Table 4-4. Power-up Conditions(1)
+
+         Symbol                                      Parameter                             Min. Max. Units
+                                                                                           100 － µs
+         tPUP     Time required after VCC is stable before the device can accept commands   － 1.5 V
+         VPOR     Power-on Reset Threshold Voltage                                         500 － ms
+         tPOFF    Minimum time at VCC = 0V between power cycles
+
+         Note: 
+           1. These parameters are characterized but they are not 100% tested in production.
+
+         If an event occurs in the system where the VCC level supplied to the AT24C128C/AT24C256C drops below the
+         maximum VPOR level specified, it is recommended that a full power cycle sequence be performed by first driving the
+         VCC pin to GND, waiting at least the minimum tPOFF time and then performing a new power-up sequence in
+         compliance with the requirements defined in this section.
+
+         © 2020 Microchip Technology Inc.                         Datasheet                DS20006270B-page 11
+                                                                        AT24C128C/AT24C256C
+
+                                                                                  Electrical Characteristics
+
+4.5.2  Pin Capacitance
+4.5.3  Table 4-5. Pin Capacitance(1)
+
+       Symbol                                Test Condition                        Max.        Units      Conditions
+         CI/O  Input/Output Capacitance (SDA)                                        8           pF   VI/O = 0V
+          CIN  Input Capacitance (A0, A1, A2 and SCL)                                6           pF   VIN = 0V
+
+       Note: 
+         1. This parameter is characterized but is not 100% tested in production.
+
+       EEPROM Cell Performance Characteristics
+       Table 4-6. EEPROM Cell Performance Characteristics
+
+                   Operation                          Test Condition       Min.          Max.             Units
+       Write Endurance(1)                TA = 25°C, VCC = 5.0V,         1,000,000         —           Write Cycles
+                                         Page Write mode
+                                                                            100           —               Years
+       Data Retention(1)                 TA = 55°C
+
+       Note: 
+         1. Performance is determined through characterization and the qualification process.
+
+       © 2020 Microchip Technology Inc.                      Datasheet                                DS20006270B-page 12
+                                              AT24C128C/AT24C256C
+
+                                         Device Operation and Communication
+
+5. Device Operation and Communication
+
+              The AT24C128C/AT24C256C operates as a slave device and utilizes a simple I2C-compatible two-wire digital serial
+              interface to communicate with a host controller, commonly referred to as the bus master. The master initiates and
+              controls all read and write operations to the slave devices on the serial bus, and both the master and the slave
+              devices can transmit and receive data on the bus.
+
+              The serial interface is comprised of just two signal lines: Serial Clock (SCL) and Serial Data (SDA). The SCL pin is
+              used to receive the clock signal from the master, while the bidirectional SDA pin is used to receive command and
+              data information from the master as well as to send data back to the master. Data is always latched into the
+              AT24C128C/AT24C256C on the rising edge of SCL and always output from the device on the falling edge of SCL.
+              Both the SCL and SDA pins incorporate integrated spike suppression filters and Schmitt Triggers to minimize the
+              effects of input spikes and bus noise.
+
+              All command and data information is transferred with the Most Significant bit (MSb) first. During bus communication,
+              one data bit is transmitted every clock cycle, and after eight bits (one byte) of data have been transferred, the
+              receiving device must respond with either an Acknowledge (ACK) or a No-Acknowledge (NACK) response bit during
+              a ninth clock cycle (ACK/NACK clock cycle) generated by the master. Therefore, nine clock cycles are required for
+              every one byte of data transferred. There are no unused clock cycles during any read or write operation, so there
+              must not be any interruptions or breaks in the data stream during each data byte transfer and ACK or NACK clock
+              cycle.
+
+              During data transfers, data on the SDA pin must only change while SCL is low, and the data must remain stable while
+              SCL is high. If data on the SDA pin changes while SCL is high, then either a Start or a Stop condition will occur. Start
+              and Stop conditions are used to initiate and end all serial bus communication between the master and the slave
+              devices. The number of data bytes transferred between a Start and a Stop condition is not limited and is determined
+              by the master. In order for the serial bus to be idle, both the SCL and SDA pins must be in the logic high state at the
+              same time.
+
+5.1 Clock and Data Transition Requirements
+
+              The SDA pin is an open-drain terminal and therefore must be pulled high with an external pull‑up resistor. SCL is an
+              input pin that can either be driven high or pulled high using an external pull‑up resistor. Data on the SDA pin may
+              change only during SCL low time periods. Data changes during SCL high periods will indicate a Start or Stop
+              condition as defined below. The relationship of the AC timing parameters with respect to SCL and SDA for the
+              AT24C128C/AT24C256C are shown in the timing waveform in Figure 4-1. The AC timing characteristics and
+              specifications are outlined in AC Characteristics.
+
+5.2    Start and Stop Conditions
+
+5.2.1  Start Condition
+       A Start condition occurs when there is a high-to-low transition on the SDA pin while the SCL pin is at a stable logic ‘1’
+5.2.2  state and will bring the device out of Standby mode. The master uses a Start condition to initiate any data transfer
+       sequence; therefore, every command must begin with a Start condition. The device will continuously monitor the SDA
+       and SCL pins for a Start condition but will not respond unless one is detected. Refer to Figure 5-1 for more details.
+
+       Stop Condition
+       A Stop condition occurs when there is a low-to-high transition on the SDA pin while the SCL pin is stable in the logic
+       ‘1’ state.
+
+       The master can use the Stop condition to end a data transfer sequence with the AT24C128C/AT24C256C, which will
+       subsequently return to Standby mode. The master can also utilize a repeated Start condition instead of a Stop
+       condition to end the current data transfer if the master will perform another operation. Refer to Figure 5-1 for more
+       details.
+
+       © 2020 Microchip Technology Inc.  Datasheet  DS20006270B-page 13
+                                                    AT24C128C/AT24C256C
+
+                                               Device Operation and Communication
+
+5.3 Acknowledge and No-Acknowledge
+
+              After every byte of data is received, the receiving device must confirm to the transmitting device that it has
+              successfully received the data byte by responding with what is known as an Acknowledge (ACK).
+              An ACK is accomplished by the transmitting device first releasing the SDA line at the falling edge of the eighth clock
+              cycle followed by the receiving device responding with a logic ‘0’ during the entire high period of the ninth clock cycle.
+
+When the AT24C128C/AT24C256C is transmitting data to the master, the master can indicate that it is done receiving
+data and wants to end the operation by sending a logic ‘1’ response to the AT24C128C/AT24C256C instead of an
+ACK response during the ninth clock cycle. This is known as a No-Acknowledge (NACK) and is accomplished by the
+master sending a logic ‘1’ during the ninth clock cycle, at which point the AT24C128C/AT24C256C will release the
+SDA line so the master can then generate a Stop condition.
+
+The transmitting device, which can be the bus master or the Serial EEPROM, must release the SDA line at the falling
+edge of the eighth clock cycle to allow the receiving device to drive the SDA line to a logic ‘0’ to ACK the previous 8-
+bit word. The receiving device must release the SDA line at the end of the ninth clock cycle to allow the transmitter to
+continue sending new data. A timing diagram has been provided in Figure 5-1 to better illustrate these requirements.
+
+Figure 5-1. Start Condition, Data Transitions, Stop Condition and Acknowledge
+
+                      SDA               SDA                  Acknowledge Window
+                    Must Be           Must Be
+                     Stable            Stable
+
+SCL                 1                 2                   8                                         9
+
+SDA
+
+   Start                                                                                            Acknowledge     Stop
+Condition                                                                                                Valid   Condition
+
+             SDA               SDA                  The transmitting device (Master or Slave)        The receiver (Master or Slave)
+           Change            Change              must release the SDA line at this point to allow      must release the SDA line at
+           Allowed           Allowed           the receiving device (Master or Slave) to drive the  this point to allow the transmitter
+                                                                                                      to continue sending new data.
+                                                  SDA line low to ACK the previous 8-bit word.
+
+5.4 Standby Mode
+
+              The AT24C128C/AT24C256C features a low-power Standby mode that is enabled when any one of the following
+              occurs:
+
+                • A valid power-up sequence is performed (see Power-Up Requirements and Reset Behavior).
+                • A Stop condition is received by the device unless it initiates an internal write cycle (see Write Operations).
+                • At the completion of an internal write cycle (see Write Operations).
+
+5.5 Software Reset
+
+              After an interruption in protocol, power loss or system Reset, any two‑wire device can be protocol reset by clocking
+              SCL until SDA is released by the EEPROM and goes high. The number of clock cycles until SDA is released by the
+              EEPROM will vary. The software Reset sequence should not take more than nine dummy clock cycles. Once the
+              software Reset sequence is complete, new protocol can be sent to the device by sending a Start condition followed
+              by the protocol. Refer to Figure 5-2 for an illustration.
+
+© 2020 Microchip Technology Inc.               Datasheet                                            DS20006270B-page 14
+                                                AT24C128C/AT24C256C
+
+                                           Device Operation and Communication
+
+Figure 5-2. Software Reset
+
+                                        Dummy Clock Cycles
+
+SCL                               1  2  3                   8             9
+
+                                                            SDA Released         Device is
+                                                             by EEPROM       Software Reset
+
+SDA
+
+In the event that the device is still non-responsive or remains active on the SDA bus, a power cycle must be used to
+reset the device (see Power-Up Requirements and Reset Behavior).
+
+© 2020 Microchip Technology Inc.           Datasheet                         DS20006270B-page 15
+                                                                 AT24C128C/AT24C256C
+
+                                                                                Memory Organization
+
+6. Memory Organization
+
+              The AT24C128C is internally organized as 256 pages of 64 bytes each. The AT24C256C is internally organized as
+              512 pages of 64 bytes each.
+
+6.1 Device Addressing
+
+              Accessing the device requires an 8-bit device address byte following a Start condition to enable the device for a read
+              or write operation. Since multiple slave devices can reside on the serial bus, each slave device must have its own
+              unique address so the master can access each device independently.
+
+              The Most Significant four bits of the device address byte is referred to as the device type identifier. The device type
+              identifier ‘1010’ (Ah) is required in bits 7 through 4 of the device address byte (see Table 6‑1).
+
+              Following the 4-bit device type identifier are the hardware slave address bits, A2, A1 and A0. These bits can be used
+              to expand the address space by allowing up to eight Serial EEPROM devices on the same bus. These hardware
+              slave address bits must correlate with the voltage level on the corresponding hardwired device address input pins A0,
+              A1 and A2. The A0, A1 and A2 pins use an internal proprietary circuit that automatically biases the pin to a logic ‘0’
+              state if the pin is allowed to float. In order to operate in a wide variety of application environments, the pull‑down
+              mechanism is intentionally designed to be somewhat strong. Once the pin is biased above the CMOS input buffer's
+              trip point (~0.5 x VCC), the pull‑down mechanism disengages. Microchip recommends connecting the A0, A1 and A2
+              pins to a known state whenever possible.
+
+              The eighth bit (bit 0) of the device address byte is the Read/Write Select bit. A read operation is initiated if this bit is
+              high and a write operation is initiated if this bit is low.
+
+              Upon the successful comparison of the device address byte, the AT24C128C/AT24C256C will return an ACK. If a
+              valid comparison is not made, the device will NACK.
+
+              Table 6-1. Device Address Byte
+
+        Package                   Device Type Identifier         Hardware Slave Address Bits   R/W
+All Package Types                                                                             Select
+                           Bit 7  Bit 6  Bit 5            Bit 4  Bit 3         Bit 2  Bit 1
+                             1      0      1                0     A2            A1     A0      Bit 0
+
+                                                                                               R/W
+
+For all operations except the current address read, two 8‑word address bytes must be transmitted to the device
+immediately following the device address byte. The word address bytes contains a 14‑bit (in the case of the
+AT24C128C) or 15-bit (in the case of the AT24C256C) memory array word address, and are used to specify which
+byte location in the EEPROM to start reading or writing. Refer to Table 6-2 to review these bit positions.
+
+The first word address byte contains the six Most Significant bits of the word address (A13 through A8) in bit
+positions five through zero (AT24C128C case) or the seven Most Significant bits of the word address (A14 through
+A8) in bit positions six through zero (AT24C256C case), as seen in Table 6-2. The remainder of the first word address
+byte are “don’t care” bits (in bit positions seven and six for the AT24C128C, in bit position seven for the AT24C256C)
+as they are outside of the addressable 128/256 Kbit range. Upon completion of the first word address byte, the
+AT24C128C/AT24C256C will return an ACK.
+
+Table 6-2. First Word Address Byte
+
+Bit 7              Bit 6          Bit 5  Bit 4            Bit 3         Bit 2         Bit 1   Bit 0
+  X                A14(1)         A13    A12              A11           A10            A9      A8
+
+Note: 
+  1. Bit 6 is a "don't care" bit on the AT24C128C.
+
+© 2020 Microchip Technology Inc.                    Datasheet                         DS20006270B-page 16
+                                                           AT24C128C/AT24C256C
+
+                                                                          Memory Organization
+
+Next, the second word address byte is sent to the device which provides the remaining eight bits of the word address
+(A7 through A0). Upon completion of the second word address byte, the AT24C128C/AT24C256C will return an ACK.
+See Table 6-3 to review these bit positions.
+
+Table 6-3. Second Word Address Byte
+
+Bit 7  Bit 6                      Bit 5  Bit 4  Bit 3      Bit 2  Bit 1  Bit 0
+ A7     A6                         A5     A4     A3         A2     A1     A0
+
+© 2020 Microchip Technology Inc.                Datasheet         DS20006270B-page 17
+                                                                                      AT24C128C/AT24C256C
+
+                                                                                                            Write Operations
+
+7. Write Operations
+
+              All write operations for the AT24C128C/AT24C256C begin with the master sending a Start condition, followed by a
+              device address byte with the R/W bit set to logic ‘0’, and then by the word address byte. The data value(s) to be
+              written to the device immediately follow the word address byte.
+
+7.1  Byte Write
+
+     The AT24C128C/AT24C256C supports the writing of a single 8-bit byte. Selecting a data word in the AT24C128C
+     requires a 14-bit word address, while selecting a data word in the AT24C256C requires a 15-bit word address.
+
+     Upon receipt of the proper device address and the word address bytes, the EEPROM will send an Acknowledge. The
+     device will then be ready to receive the 8-bit data word. Following receipt of the 8‑bit data word, the EEPROM will
+     respond with an ACK. The addressing device, such as a bus master, must then terminate the write operation with a
+     Stop condition. At that time, the EEPROM will enter an internally self-timed write cycle, which will be completed within
+     tWR, while the data word is being programmed into the nonvolatile EEPROM. All inputs are disabled during this write
+     cycle, and the EEPROM will not respond until the write is complete.
+
+     Figure 7-1. Byte Write
+
+                      12 3 4 567 89 12 345 67 89
+
+     SCL
+
+                           Device Address Byte              First Word Address Byte
+
+     SDA               10  1 0 A2 A1 A0 0       0 X @(1) A13 A12 A11 A10 A9 A8 0
+                      MSb                              MSb
+
+     Start Condition                                ACK                                   ACK
+        by Master                               from Slave                            from Slave
+
+                                       12 3 4 567 89 12 345 67 89
+
+                                                Second Word Address Byte              Data Word
+
+                                       A7 A6 A5 A4 A3 A2 A1 A0 0 D7 D6 D5 D4 D3 D2 D1 D0 0
+
+                                       MSb                                MSb
+
+                                                                              ACK                     ACK Stop Condition
+                                                                          from Slave              from Slave by Master
+
+     NoNteo:t e 1: For the AT24C128C, the @ indicates a “don't care” bit. For the AT24C256C, the @ indicates the A14 word address bit.
+
+       1. For the AT24C128C, the @ indicates a “don't care” bit. For the AT24C256C, the @ indicates the A14 word
+              address bit.
+
+7.2 Page Write
+
+              A page write operation for the AT24C128C and AT24C256C allows up to 64 bytes to be written in the same write
+              cycle, provided all bytes are in the same row of the memory array (where address bits A13/A14 to A6 are the same).
+              Partial page writes of less than 64 bytes are also allowed.
+
+              A page write is initiated the same way as a byte write, but the bus master does not send a Stop condition after the
+              first data word is clocked in. Instead, after the EEPROM acknowledges receipt of the first data word, the bus master
+              can transmit up to 63 additional data words. The EEPROM will respond with an ACK after each data word is
+              received. Once all data to be written has been sent to the device, the bus master must issue a Stop condition (see
+              Figure 7-2) at which time the internally self-timed write cycle will begin.
+
+              The lower six bits of the word address are internally incremented following the receipt of each data word. The higher
+              order address bits are not incremented and retain the memory page row location. Page write operations are limited to
+              writing bytes within a single physical page, regardless of the number of bytes actually being written. When the
+              incremented word address reaches the page boundary, the address counter will rollover to the beginning of the same
+
+     © 2020 Microchip Technology Inc.                       Datasheet                             DS20006270B-page 18
+                                                                                     AT24C128C/AT24C256C
+
+                                                                                                           Write Operations
+
+page. Nevertheless, creating a rollover event should be avoided as previously loaded data in the page could become
+unintentionally altered.
+
+Figure 7-2.  Page Write
+
+                 12 3 4 567 89 12 345 67 89
+
+SCL
+
+                      Device Address Byte                   First Word Address Byte
+
+SDA              1 0 1 0 A2 A1 A0 0 0 X @(1) A13 A12 A11 A10 A9 A8 0
+
+                 MSb                                   MSb
+
+Start Condition                                ACK                                       ACK
+   by Master                               from Slave                                from Slave
+
+     12 3 4 567 89 12 345 67 89 123 45 67 89
+
+          Second Word Address Byte                          Data Word (n)            Data Word (n+x), max of 64 without rollover
+
+     A7 A6 A5 A4 A3 A2 A1 A0 0 D7 D6 D5 D4 D3 D2 D1 D0 0 D7 D6 D5 D4 D3 D2 D1 D0 0
+
+     MSb                                   MSb                                       MSb
+
+                                               ACK                             ACK                                 Stop Condition
+                                           from Slave                      from Slave                       ACK by Master
+                                                                                                        from Slave
+
+NotNeo: te 1: For the AT24C128C, the @ indicates a “don't care” bit. For the AT24C256C, the @ indicates the A14 word address bit. .
+
+  1. For the AT24C128C, the @ indicates a “don't care” bit. For the AT24C256C, the @ indicates the A14 word
+         address bit.
+
+7.3 Acknowledge Polling
+
+              An Acknowledge Polling routine can be implemented to optimize time-sensitive applications that would prefer not to
+              wait the fixed maximum write cycle time (tWR). This method allows the application to know immediately when the
+              Serial EEPROM write cycle has completed, so a subsequent operation can be started.
+
+              Once the internally self-timed write cycle has started, an Acknowledge Polling routine can be initiated. This involves
+              repeatedly sending a Start condition followed by a valid device address byte with the R/W bit set at logic ‘0’. The
+              device will not respond with an ACK while the write cycle is ongoing. Once the internal write cycle has completed, the
+              EEPROM will respond with an ACK, allowing a new read or write operation to be immediately initiated. A flowchart
+              has been included below in Figure 7-3 to better illustrate this technique.
+
+              Figure 7-3. Acknowledge Polling Flowchart
+
+     Send any              Send                            Send Start                      Did     YES    Proceed to
+       Write               Stop                        condition followed              the device        next Read or
+                        condition                                                                       Write operation.
+      protocol.       to initiate the                       by a valid                   ACK?
+                       Write cycle.                     Device Address
+                                                       byte with R/W = 0.
+
+                                                                           NO
+
+7.4 Write Cycle Timing
+
+              The length of the self-timed write cycle (tWR) is defined as the amount of time from the Stop condition that begins the
+              internal write cycle to the Start condition of the first device address byte sent to the AT24C128C/AT24C256C that it
+
+© 2020 Microchip Technology Inc.                            Datasheet                                   DS20006270B-page 19
+                                                    AT24C128C/AT24C256C
+
+                                                                                              Write Operations
+
+subsequently responds to with an ACK. Figure 7-4 has been included to show this measurement. During the
+internally self-timed write cycle, any attempts to read from or write to the memory array will not be processed.
+Figure 7-4. Write Cycle Timing
+
+SCL  8               9                                                            9
+                  ACK
+     Data Word n
+
+SDA  D0                                                                           ACK
+
+                                                                   First Acknowledge from the device
+
+                                             tWR                   to a valid device address sequence after
+
+                                                                   write cycle is initiated. The minimum tWR
+                                                                   can only be determined through
+
+                                     Stop               Start      the use of an ACK Polling routine.         Stop
+                                  Condition
+                                                        Condition                                             Condition
+
+7.5 Write Protection
+
+              The AT24C128C/AT24C256C utilizes a hardware data protection scheme that allows the user to write-protect the
+              entire memory array contents when the WP pin is at VCC (or a valid VIH). No write protection will be set if the WP pin
+              is at GND or left floating.
+
+              Table 7-1. Write-Protect Behavior
+
+     WP Pin Voltage                                Part of the Array Protected
+             VCC                                                Full Array
+            GND
+                                             None － Write Protection Not Enabled
+
+The status of the WP pin is sampled at the Stop condition for every byte write or page write operation prior to the start
+of an internally self-timed write cycle. Changing the WP pin state after the Stop condition has been sent will not alter
+or interrupt the execution of the write cycle.
+
+If an attempt is made to write to the device while the WP pin has been asserted, the device will acknowledge the
+device address, word address and data bytes, but no write cycle will occur when the Stop condition is issued. The
+device will immediately be ready to accept a new read or write operation.
+
+© 2020 Microchip Technology Inc.             Datasheet                            DS20006270B-page 20
+                                                                   AT24C128C/AT24C256C
+
+                                                                                         Read Operations
+
+8. Read Operations
+
+              Read operations are initiated the same way as write operations with the exception that the Read/Write Select bit in
+              the device address byte must be a logic ‘1’. There are three read operations:
+
+                • Current Address Read
+                • Random Address Read
+                • Sequential Read
+
+8.1 Current Address Read
+
+              The internal data word address counter maintains the last address accessed during the last read or write operation,
+              incremented by one. This address stays valid between operations as long as the VCC is maintained to the part. The
+              address rollover during a read is from the last byte of the last page to the first byte of the first page of the memory.
+
+              A current address read operation will output data according to the location of the internal data word address counter.
+              This is initiated with a Start condition, followed by a valid device address byte with the R/W bit set to logic ‘1’. The
+              device will ACK this sequence and the current address data word is serially clocked out on the SDA line. All types of
+              read operations will be terminated if the bus master does not respond with an ACK (it NACKs) during the ninth clock
+              cycle. After the NACK response, the master may send a Stop condition to complete the protocol, or it can send a
+              Start condition to begin the next sequence.
+
+              Figure 8-1. Current Address Read
+
+                 12 3 4 567 89 12 345 67 89
+
+SCL
+
+                                  Device Address Byte              Data Word (n)
+
+SDA              1 0 1 0 A2 A1 A0 1 0 D7 D6 D5 D4 D3 D2 D1 D0 1
+
+                 MSb                                   MSb
+
+Start Condition                                            ACK                                  Stop Condition
+   by Master                                           from Slave                    NACK by Master
+                                                                                  from Master
+
+8.2 Random Read
+
+              A random read begins in the same way as a byte write operation does to load in a new data word address. This is
+              known as a “dummy write” sequence; however, the data byte and the Stop condition of the byte write must be omitted
+              to prevent the part from entering an internal write cycle. Once the device address and word address are clocked in
+              and acknowledged by the EEPROM, the bus master must generate another Start condition. The bus master now
+              initiates a current address read by sending a Start condition, followed by a valid device address byte with the R/W bit
+              set to logic ‘1’. The EEPROM will ACK the device address and serially clock out the data word on the SDA line. All
+              types of read operations will be terminated if the bus master does not respond with an ACK (it NACKs) during the
+              ninth clock cycle. After the NACK response, the master may send a Stop condition to complete the protocol, or it can
+              send a Start condition to begin the next sequence.
+
+© 2020 Microchip Technology Inc.                       Datasheet                  DS20006270B-page 21
+                                                                                                                             AT24C128C/AT24C256C
+
+                                                                                                                                                   Read Operations
+
+Figure 8-2. Random Read
+
+                 12 3 4 567 89 12 345 67 89 123 45 67 89
+
+SCL
+
+                      Device Address Byte                    First Word Address Byte                                                      Second Word Address Byte
+
+SDA               10  1 0 A2 A1 A0 0                    0 X @(1) A13 A12 A11 A10 A9 A8 0 A7 A6 A5 A4 A3 A2 A1 A0 0
+                 MSb
+                                                        MSb                                                                       MSb
+
+Start Condition                                     ACK                                                                          ACK                                    ACK
+   by Master                                    from Slave                                                                   from Slave                             from Slave
+
+                                                                            Dummy Write
+                                           12 3 4 567 89 12 345 67 89
+
+                                                        Device Address Byte                                                       Data Word (n)
+
+                                           1 0 1 0 A2 A1 A0 1 0 D7 D6 D5 D4 D3 D2 D1 D0 1
+
+                                           MSb                                                                   MSb
+
+                      Start Condition                                                                                ACK                                      NACK Stop Condition
+                         by Master                                                                               from Slave                                from Master by Master
+
+                                                                                                              .
+
+Note: 
+
+1. For the AT24C128C, the @ indicates a “don't care” bit. For the AT24C256C, the @ indicates the A14 word
+      address bit.
+
+8.3 Sequential Read
+
+              Sequential reads are initiated by either a current address read or a random read. After the bus master receives a
+              data word, it responds with an Acknowledge. As long as the EEPROM receives an ACK, it will continue to increment
+              the word address and serially clock out sequential data words. When the maximum memory address is reached, the
+              data word address will rollover and the sequential read will continue from the beginning of the memory array. All
+              types of read operations will be terminated if the bus master does not respond with an ACK (it NACKs) during the
+              ninth clock cycle. After the NACK response, the master may send a Stop condition to complete the protocol, or it can
+              send a Start condition to begin the next sequence.
+
+              Figure 8-3. Sequential Read
+
+                 12 3 4 567 89 12 345 67 89
+
+SCL
+
+                      Device Address Byte                    Data Word (n)
+
+SDA              1 0 1 0 A2 A1 A0 1 0 D7 D6 D5 D4 D3 D2 D1 D0 0
+
+                 MSb                                    MSb
+
+Start Condition                                     ACK                                                                          ACK
+   by Master                                    from Slave                                                                   from Master
+
+     12 3 4 567 89 12 345 67 89 123 45 67 89
+
+                      Data Word (n+1)                        Data Word (n+2)                                                              Data Word (n+x)
+
+     D7 D6 D5 D4 D3 D2 D1 D0 0 D7 D6 D5 D4 D3 D2 D1 D0 0 D7 D6 D5 D4 D3 D2 D1 D0 1
+
+     MSb                                        MSb                                                                          MSb
+
+                                               ACK                                                                   ACK                                                Stop Condition
+                                           from Master                                                           from Master                                  NACK by Master
+                                                                                                                                                           from Master
+
+© 2020 Microchip Technology Inc.                             Datasheet                                                                                     DS20006270B-page 22
+                                                            AT24C128C/AT24C256C
+
+                                                                      Device Default Condition from Microchip
+
+9. Device Default Condition from Microchip
+
+              The AT24C128C/AT24C256C is delivered with the EEPROM array set to logic ‘1’, resulting in FFh data in all
+              locations.
+
+© 2020 Microchip Technology Inc.  Datasheet  DS20006270B-page 23
+                                                            AT24C128C/AT24C256C
+
+                                                                                                Packaging Information
+
+10. Packaging Information
+
+10.1 Package Marking Information
+                      AT24C128C and AT24C256C: Package Marking Information
+
+8-lead SOIC                                     8-lead TSSOP                     8-pad UDFN
+
+                   ATML$YWW                           AT$YWW                     2.0 x 3.0 mm Body
+                   ###% CO                            ###%CO
+                   YYWWNNN                           YYWWNNN                              ###
+                                                                                          $%
+                                                                                          NNN
+
+Note 1: designates pin 1
+Note 2: Package drawings are not to scale
+
+Catalog Number Truncation                            Truncation Code ###: 2DC
+AT24C128C                                            Truncation Code ###: 2EC
+AT24C256C
+
+Date Codes                                                                        % = Voltages
+                                                                                      M: 1.7V min
+YY = Year   20: 2020              Y = Year  0: 2020  WW = Work Week of Assembly       D: 2.5V min
+16: 2016    21: 2021              6: 2016   1: 2021  02: Week 2
+17: 2017    22: 2022              7: 2017   2: 2022  04: Week 4                  Atmel Truncation
+18: 2018    23: 2023              8: 2018   3: 2023                                  AT: Atmel
+19: 2019                          9: 2019               ...
+                                                     52: Week 52                  ATM: Atmel
+                                                                                 ATML: Atmel
+Country of Origin                           $ = Device Grade
+
+CO = Country of Origin                      P:       Automotive Grade 1
+
+                                            9:       Automotive Grade 3
+
+Trace Code
+NNN = Alphanumeric Trace Code (2 Characters for Small Packages)
+
+© 2020 Microchip Technology Inc.                     Datasheet                                      DS20006270B-page 24
+                                                                                   AT24C128C/AT24C256C
+
+                                                                                                 Packaging Information
+
+8-Lead Plastic Small Outline (SN) - Narrow, 3.90 mm (.150 In.) Body [SOIC]
+
+Note:  For the most current package drawings, please see the Microchip Packaging Specification located at
+       http://www.microchip.com/packaging
+
+                                                                                     2X
+
+                                                                                             0.10 C A–B
+                                                                    D
+
+                                                              A                    D
+                                                                           NOTE 5
+                                                           N
+
+                                                    E1                             E
+                                                     2                             2
+
+                         E1                                                            E
+2X
+                                                                                                  2X
+       0.10 C A–B                                                                                        0.10 C A–B
+
+                         NOTE 1                         1        2
+
+                          C A A2                              e                    NX b
+            SEATING                                                                      0.25
+                                                              B     NOTE 5                        C A–B D
+               PLANE
+                                  A1                          TOP VIEW
+
+                                                                                   0.10 C
+
+                                                              SIDE VIEW            8X
+                                                                                          0.10 C
+
+                                      h                                                                  R0.13
+                 h                                                                                       R0.13 0.23
+       H
+
+                                      SEE VIEW C                                                     L
+                                                                                                  (L1)
+                                VIEW A–A
+                                                                                            VIEW C
+© 2020 Microchip Technology Inc.
+                                                                 Microchip Technology Drawing No. C04-057-SN Rev F Sheet 1 of 2
+
+© 2020 Microchip Technology Inc.                                    Datasheet                            DS20006270B-page 25
+                                                   AT24C128C/AT24C256C
+
+                                                                                     Packaging Information
+
+8-Lead Plastic Small Outline (SN) - Narrow, 3.90 mm (.150 In.) Body [SOIC]
+
+ Note: For the most current package drawings, please see the Microchip Packaging Specification located at
+              http://www.microchip.com/packaging
+
+                                     Units                   MILLIMETERS
+
+                                     Dimension Limits  MIN        NOM                 MAX
+
+        Number of Pins                           N                8
+
+        Pitch                                    e                1.27 BSC
+
+        Overall Height                           A     -          -                   1.75
+
+        Molded Package Thickness                 A2    1.25       -                   -
+
+        Standoff                  §              A1    0.10       -                   0.25
+
+        Overall Width                            E                6.00 BSC
+
+        Molded Package Width                     E1               3.90 BSC
+
+        Overall Length                           D                4.90 BSC
+
+        Chamfer (Optional)                       h     0.25       -                   0.50
+
+        Foot Length                              L     0.40       -                   1.27
+
+        Footprint                                L1               1.04 REF
+
+        Foot Angle                                     0°         -                   8°
+
+        Lead Thickness                           c     0.17       -                   0.25
+
+        Lead Width                               b     0.31       -                   0.51
+
+        Mold Draft Angle Top                           5°         -                   15°
+
+        Mold Draft Angle Bottom                        5°         -                   15°
+
+Notes:
+
+1. Pin 1 visual index feature may vary, but must be located within the hatched area.
+2. § Significant Characteristic
+
+3. Dimensions D and E1 do not include mold flash or protrusions. Mold flash or
+     protrusions shall not exceed 0.15mm per side.
+
+4. Dimensioning and tolerancing per ASME Y14.5M
+
+          BSC: Basic Dimension. Theoretically exact value shown without tolerances.
+          REF: Reference Dimension, usually without tolerance, for information purposes only.
+5. Datums A & B to be determined at Datum H.
+
+                                                 Microchip Technology Drawing No. C04-057-SN Rev F Sheet 2 of 2
+
+© 2020 Microchip Technology Inc.
+
+© 2020 Microchip Technology Inc.                       Datasheet                               DS20006270B-page 26
+                                                   AT24C128C/AT24C256C
+
+                                                                                     Packaging Information
+
+8-Lead Plastic Small Outline (SN) - Narrow, 3.90 mm (.150 In.) Body [SOIC]
+
+ Note: For the most current package drawings, please see the Microchip Packaging Specification located at
+              http://www.microchip.com/packaging
+
+                                                                                                 SILK SCREEN
+                                  C
+
+                                                                                              Y1
+
+                                                                                           X1
+                                                      E
+
+                                     RECOMMENDED LAND PATTERN
+
+                                  Units                  MILLIMETERS
+
+                                  Dimension Limits  MIN  NOM          MAX
+
+Contact Pitch                     E                      1.27 BSC
+
+Contact Pad Spacing               C                      5.40
+
+Contact Pad Width (X8)            X1                                  0.60
+
+Contact Pad Length (X8)           Y1                                  1.55
+
+Notes:
+1. Dimensioning and tolerancing per ASME Y14.5M
+
+          BSC: Basic Dimension. Theoretically exact value shown without tolerances.
+
+                                                                                    Microchip Technology Drawing C04-2057-SN Rev F
+
+© 2020 Microchip Technology Inc.
+
+© 2020 Microchip Technology Inc.  Datasheet                                                                   DS20006270B-page 27
+                          M
+
+                                                 AT24C128C/AT24C256C
+               Packaging Diagrams and ParametPearcskaging Information
+
+8-Lead Plastic Thin Shrink Small Outline (ST) – 4.4 mm Body [TSSOP]
+
+   Note: For the most current package drawings, please see the Microchip Packaging Specification located at
+               http://www.microchip.com/packaging
+
+                                                          D
+                                                  N
+
+                                                         E
+                                                  E1
+
+        NOTE 1
+
+                            12
+                    b
+
+                                         e
+
+                                                      c                                                  φ
+
+               A                                  A2
+
+               A1                                                  L1                           L
+
+                                                            Units            MILLIMETERS
+
+                                            Dimension Limits           MIN            NOM          MAX
+
+        Number of Pins                                      N                         8
+
+        Pitch                                               e                         0.65 BSC
+
+        Overall Height                                      A          –              –            1.20
+
+        Molded Package Thickness                            A2         0.80           1.00         1.05
+
+        Standoff                                            A1         0.05           –            0.15
+
+        Overall Width                                       E                         6.40 BSC
+
+        Molded Package Width                                E1         4.30           4.40         4.50
+
+        Molded Package Length                               D          2.90           3.00         3.10
+
+        Foot Length                                         L          0.45           0.60         0.75
+
+        Footprint                                           L1                        1.00 REF
+
+        Foot Angle                                          φ          0°             –            8°
+
+        Lead Thickness                                      c          0.09           –            0.20
+
+        Lead Width                                          b          0.19           –            0.30
+
+Notes:
+
+1. Pin 1 visual index feature may vary, but must be located within the hatched area.
+
+2. Dimensions D and E1 do not include mold flash or protrusions. Mold flash or protrusions shall not exceed 0.15 mm per side.
+
+3. Dimensioning and tolerancing per ASME Y14.5M.
+
+        BSC: Basic Dimension. Theoretically exact value shown without tolerances.
+        REF: Reference Dimension, usually without tolerance, for information purposes only.
+
+                                                                                      Microchip Technology Drawing C04-086B
+
+© 2007 Microchip Technology Inc.                                                                         DS00049AR-page 117
+
+© 2020 Microchip Technology Inc.                            Datasheet                                       DS20006270B-page 28
+M                                    AT24C128C/AT24C256C
+   Packaging Diagrams and ParametPearcskaging Information
+
+Note: For the most current package drawings, please see the Microchip Packaging Specification located at
+            http://www.microchip.com/packaging
+
+      DS00049BC-page 96                       2009 Microchip Technology Inc.
+
+© 2020 Microchip Technology Inc.  Datasheet  DS20006270B-page 29
+                                                                                       AT24C128C/AT24C256C
+
+                                                                                                     Packaging Information
+
+8-Lead Ultra Thin Plastic Dual Flat, No Lead Package (Q4B) - 2x3 mm Body [UDFN]
+Atmel Legacy Global Package Code YNZ
+
+ Note: For the most current package drawings, please see the Microchip Packaging Specification located at
+              http://www.microchip.com/packaging
+
+                                                               D                       AB
+                                                      N
+
+(DATUM A)
+
+                                                                      E
+(DATUM B)
+
+        NOTE 1
+
+        2X
+               0.10 C
+
+                                         12
+               2X
+
+                  0.10 C TOP VIEW
+
+                                                                                           0.10 C         A1
+
+              C                                                                        8X
+SEATING A
+                                                                                           0.08 C
+   PLANE
+                          (A3)
+
+                                                      SIDE VIEW
+
+                                  0.10                CAB
+                                                                        D2
+
+                                                                                    e
+                                                                                    2
+
+                                                                    12
+
+                                                                                                       0.10 C A B
+
+                                                                                           E2          K
+
+                                                   L       N                               8X b        CAB
+© 2017 Microchip Technology Inc.                                                                 0.10  C
+                                                            e                                    0.05
+
+                                                      BOTTOM VIEW
+
+                                                      Microchip Technology Drawing C04-21355-Q4B Rev B Sheet 1 of 2
+
+© 2020 Microchip Technology Inc.                      Datasheet                                               DS20006270B-page 30
+                                                 AT24C128C/AT24C256C
+
+                                                                                  Packaging Information
+
+8-Lead Ultra Thin Plastic Dual Flat, No Lead Package (Q4B) - 2x3 mm Body [UDFN]
+Atmel Legacy Global Package Code YNZ
+
+ Note: For the most current package drawings, please see the Microchip Packaging Specification located at
+              http://www.microchip.com/packaging
+
+                                                 Units        MILLIMETERS
+
+                                  Dimension Limits MIN        NOM                     MAX
+
+        Number of Terminals                      N                 8
+                                                              0.50 BSC
+        Pitch                                    e
+
+        Overall Height                           A      0.50  0.55                    0.60
+
+        Standoff                                 A1     0.00  0.02                    0.05
+
+        Terminal Thickness                       A3           0.152 REF
+
+        Overall Length                           D            2.00 BSC
+
+        Exposed Pad Length                       D2     1.40  1.50                    1.60
+
+        Overall Width                            E            3.00 BSC
+
+        Exposed Pad Width                        E2     1.20  1.30                    1.40
+
+        Terminal Width                           b      0.18  0.25                    0.30
+
+        Terminal Length                          L      0.35  0.40                    0.45
+
+        Terminal-to-Exposed-Pad                  K      0.20  -                       -
+
+Notes:
+
+1. Pin 1 visual index feature may vary, but must be located within the hatched area.
+2. Package is saw singulated
+
+3. Dimensioning and tolerancing per ASME Y14.5M
+
+        BSC: Basic Dimension. Theoretically exact value shown without tolerances.
+        REF: Reference Dimension, usually without tolerance, for information purposes only.
+
+                                                 Microchip Technology Drawing C04-21355-Q4B Rev B Sheet 2 of 2
+
+© 2017 Microchip Technology Inc.
+
+© 2020 Microchip Technology Inc.                 Datasheet                                   DS20006270B-page 31
+                                                  AT24C128C/AT24C256C
+
+                                                                                   Packaging Information
+
+8-Lead Ultra Thin Plastic Dual Flat, No Lead Package (Q4B) - 2x3 mm Body [UDFN]
+Atmel Legacy Global Package Code YNZ
+
+ Note: For the most current package drawings, please see the Microchip Packaging Specification located at
+              http://www.microchip.com/packaging
+
+                                                                           X2
+                                                                           EV
+
+                                                                                                G2
+                                                                   8
+
+                                                                                         ØV
+
+                                  C Y2
+                                                                                          G1
+
+                                  12                              Y1
+                                                          X1
+SILK SCREEN
+
+                                                              E
+
+                                  RECOMMENDED LAND PATTERN
+
+                                  Units                   MILLIMETERS
+
+                                  Dimension Limits  MIN   NOM                                 MAX
+
+Contact Pitch                     E                       0.50 BSC
+
+Optional Center Pad Width         X2                                                          1.60
+
+Optional Center Pad Length        Y2                                                          1.40
+
+Contact Pad Spacing               C                       2.90
+
+Contact Pad Width (X8)            X1                                                          0.30
+
+Contact Pad Length (X8)           Y1                                                          0.85
+
+Contact Pad to Center Pad (X8) G1                   0.33
+
+Contact Pad to Contact Pad (X6) G2                  0.20
+
+Thermal Via Diameter              V                       0.30
+
+Thermal Via Pitch                 EV                      1.00
+
+Notes:
+
+1. Dimensioning and tolerancing per ASME Y14.5M
+          BSC: Basic Dimension. Theoretically exact value shown without tolerances.
+
+2. For best soldering results, thermal vias, if used, should be filled or tented to avoid solder loss during
+    reflow process
+
+                                                    Microchip Technology Drawing C04-23355-Q4B Rev B
+
+© 2017 Microchip Technology Inc.
+
+© 2020 Microchip Technology Inc.  Datasheet                                                         DS20006270B-page 32
+                                                  AT24C128C/AT24C256C
+
+                                                                        Revision History
+
+11.  Revision History
+
+     Revision B (June 2020)
+     Corrected Product Identification System. Updated UDFN package drawing.
+
+     Revision A (November 2019)
+     Updated to the Microchip template. Microchip DS20006270 replaces Atmel document 8818. Updated Part Marking
+     Information. Updated the “Software Reset” section. Added ESD rating. Removed lead finish designation. Updated
+     trace code format in package markings. Added a figure for “System Configuration Using Two‑Wire Serial EEPROMs”.
+     Updated “Block Diagram” figure. Removed the Automotive Grade 2 option. Updated the SOIC, TSSOP and UDFN
+     package drawings to Microchip format.
+
+     Atmel Document 8818 Revision C (July 2016)
+     Added the Automotive Grade 2 and 3 and UDFN options and table of contents. Updated the “Software Reset”
+     section, part marking, 8S1 package drawing, disclaimer page, template and reorganize document.
+
+     Atmel Document 8818 Revision B (October 2012)
+     Removed preliminary status. Updated 8X — TSSOP package drawing. Updated Atmel logos and disclaimer/copy
+     page.
+
+     Atmel Document 8818 Revision A (April 2012)
+     Initial document release.
+
+     © 2020 Microchip Technology Inc.  Datasheet  DS20006270B-page 33
+                                                    AT24C128C/AT24C256C
+
+The Microchip Website
+
+Microchip provides online support via our website at www.microchip.com/. This website is used to make files and
+information easily available to customers. Some of the content available includes:
+
+  • Product Support – Data sheets and errata, application notes and sample programs, design resources, user’s
+      guides and hardware support documents, latest software releases and archived software
+
+  • General Technical Support – Frequently Asked Questions (FAQs), technical support requests, online
+      discussion groups, Microchip design partner program member listing
+
+  • Business of Microchip – Product selector and ordering guides, latest Microchip press releases, listing of
+      seminars and events, listings of Microchip sales offices, distributors and factory representatives
+
+Product Change Notification Service
+
+Microchip’s product change notification service helps keep customers current on Microchip products. Subscribers will
+receive email notification whenever there are changes, updates, revisions or errata related to a specified product
+family or development tool of interest.
+To register, go to www.microchip.com/pcn and follow the registration instructions.
+
+Customer Support
+
+Users of Microchip products can receive assistance through several channels:
+  • Distributor or Representative
+  • Local Sales Office
+  • Embedded Solutions Engineer (ESE)
+  • Technical Support
+
+Customers should contact their distributor, representative or ESE for support. Local sales offices are also available to
+help customers. A listing of sales offices and locations is included in this document.
+Technical support is available through the website at: www.microchip.com/support
+
+© 2020 Microchip Technology Inc.  Datasheet  DS20006270B-page 34
+                                                    AT24C128C/AT24C256C
+
+Product Identification System
+
+To order or obtain information, e.g., on pricing or delivery, refer to the factory or the listed sales office.
+                                            AT 2 4 C 1 2 8 C - S S P D - T
+
+                 Product Family                                        Shipping Carrier Option
+  24C = Standard I2C-compatible                                        B or blank = Bulk (Tubes)
+                                                                       T = Tape and Reel, Standard Quantity Option
+                       Serial EEPROM                                   E = Tape and Reel, Extended Quantity Option
+                    Device Density
+                                                                       Operating Voltage
+                           16 = 16 Kilobit                             D = 2.5V to 5.5V
+                   Device Revision                                     M = 1.7V to 5.5V
+
+Examples                                                               Device Grade
+ Device                                                                P = Automotive Grade 1 (-40°C to +125°C)
+                                                                       9 = Automotive Grade 3 (-40°C to +85°C)
+ AT24C128C-SSPD-T
+ AT24C128C-SS9M-T                                                      Package Option
+ AT24C256C-SSPD-T                                                      SS = SOIC
+ AT24C256C-SS9M-T                                                      X = TSSOP
+ AT24C128C-XPD-T                                                       MA = 2.0mm x 3.0mm UDFN
+ AT24C128C-X9M-T
+ AT24C256C-XPD-T                            Package  Package  Package  Shipping Carrier  Automotive
+ AT24C256C-X9M-T                                     Drawing   Option        Option         Grade
+ AT24C128C-MAPD-T                             SOIC
+ AT24C128C-MAPD-E                             SOIC     Code       SS     Tape and Reel     Grade 1
+                                              SOIC       SN       SS     Tape and Reel     Grade 3
+ AT24C256C-MA9M-T                             SOIC       SN       SS     Tape and Reel     Grade 1
+                                             TSSOP       SN       SS     Tape and Reel     Grade 3
+                                             TSSOP       SN        X     Tape and Reel     Grade 1
+                                             TSSOP       ST        X     Tape and Reel     Grade 3
+                                             TSSOP       ST        X     Tape and Reel     Grade 1
+                                             UDFN        ST        X     Tape and Reel     Grade 3
+                                             UDFN        ST      MA      Tape and Reel     Grade 1
+                                                        Q4B      MA      Extended Qty.     Grade 1
+                                                        Q4B              Tape and Reel
+                                                                         Tape and Reel     Grade 3
+                                            UDFN     Q4B      MA
+
+Microchip Devices Code Protection Feature
+
+Note the following details of the code protection feature on Microchip devices:
+  • Microchip products meet the specification contained in their particular Microchip Data Sheet.
+  • Microchip believes that its family of products is one of the most secure families of its kind on the market today,
+      when used in the intended manner and under normal conditions.
+
+© 2020 Microchip Technology Inc.                          Datasheet                      DS20006270B-page 35
+                                                    AT24C128C/AT24C256C
+
+  • There are dishonest and possibly illegal methods used to breach the code protection feature. All of these
+      methods, to our knowledge, require using the Microchip products in a manner outside the operating
+      specifications contained in Microchip’s Data Sheets. Most likely, the person doing so is engaged in theft of
+      intellectual property.
+
+  • Microchip is willing to work with the customer who is concerned about the integrity of their code.
+  • Neither Microchip nor any other semiconductor manufacturer can guarantee the security of their code. Code
+
+      protection does not mean that we are guaranteeing the product as “unbreakable.”
+
+Code protection is constantly evolving. We at Microchip are committed to continuously improving the code protection
+features of our products. Attempts to break Microchip’s code protection feature may be a violation of the Digital
+Millennium Copyright Act. If such acts allow unauthorized access to your software or other copyrighted work, you
+may have a right to sue for relief under that Act.
+
+Legal Notice
+
+Information contained in this publication regarding device applications and the like is provided only for your
+convenience and may be superseded by updates. It is your responsibility to ensure that your application meets with
+your specifications. MICROCHIP MAKES NO REPRESENTATIONS OR WARRANTIES OF ANY KIND WHETHER
+EXPRESS OR IMPLIED, WRITTEN OR ORAL, STATUTORY OR OTHERWISE, RELATED TO THE INFORMATION,
+INCLUDING BUT NOT LIMITED TO ITS CONDITION, QUALITY, PERFORMANCE, MERCHANTABILITY OR
+FITNESS FOR PURPOSE. Microchip disclaims all liability arising from this information and its use. Use of Microchip
+devices in life support and/or safety applications is entirely at the buyer’s risk, and the buyer agrees to defend,
+indemnify and hold harmless Microchip from any and all damages, claims, suits, or expenses resulting from such
+use. No licenses are conveyed, implicitly or otherwise, under any Microchip intellectual property rights unless
+otherwise stated.
+
+Trademarks
+
+The Microchip name and logo, the Microchip logo, Adaptec, AnyRate, AVR, AVR logo, AVR Freaks, BesTime,
+BitCloud, chipKIT, chipKIT logo, CryptoMemory, CryptoRF, dsPIC, FlashFlex, flexPWR, HELDO, IGLOO, JukeBlox,
+KeeLoq, Kleer, LANCheck, LinkMD, maXStylus, maXTouch, MediaLB, megaAVR, Microsemi, Microsemi logo, MOST,
+MOST logo, MPLAB, OptoLyzer, PackeTime, PIC, picoPower, PICSTART, PIC32 logo, PolarFire, Prochip Designer,
+QTouch, SAM-BA, SenGenuity, SpyNIC, SST, SST Logo, SuperFlash, Symmetricom, SyncServer, Tachyon,
+TempTrackr, TimeSource, tinyAVR, UNI/O, Vectron, and XMEGA are registered trademarks of Microchip Technology
+Incorporated in the U.S.A. and other countries.
+
+APT, ClockWorks, The Embedded Control Solutions Company, EtherSynch, FlashTec, Hyper Speed Control,
+HyperLight Load, IntelliMOS, Libero, motorBench, mTouch, Powermite 3, Precision Edge, ProASIC, ProASIC Plus,
+ProASIC Plus logo, Quiet-Wire, SmartFusion, SyncWorld, Temux, TimeCesium, TimeHub, TimePictra, TimeProvider,
+Vite, WinPath, and ZL are registered trademarks of Microchip Technology Incorporated in the U.S.A.
+
+Adjacent Key Suppression, AKS, Analog-for-the-Digital Age, Any Capacitor, AnyIn, AnyOut, BlueSky, BodyCom,
+CodeGuard, CryptoAuthentication, CryptoAutomotive, CryptoCompanion, CryptoController, dsPICDEM,
+dsPICDEM.net, Dynamic Average Matching, DAM, ECAN, EtherGREEN, In-Circuit Serial Programming, ICSP,
+INICnet, Inter-Chip Connectivity, JitterBlocker, KleerNet, KleerNet logo, memBrain, Mindi, MiWi, MPASM, MPF,
+MPLAB Certified logo, MPLIB, MPLINK, MultiTRAK, NetDetach, Omniscient Code Generation, PICDEM,
+PICDEM.net, PICkit, PICtail, PowerSmart, PureSilicon, QMatrix, REAL ICE, Ripple Blocker, SAM-ICE, Serial Quad
+I/O, SMART-I.S., SQI, SuperSwitcher, SuperSwitcher II, Total Endurance, TSHARC, USBCheck, VariSense,
+ViewSpan, WiperLock, Wireless DNA, and ZENA are trademarks of Microchip Technology Incorporated in the U.S.A.
+and other countries.
+
+SQTP is a service mark of Microchip Technology Incorporated in the U.S.A.
+
+The Adaptec logo, Frequency on Demand, Silicon Storage Technology, and Symmcom are registered trademarks of
+Microchip Technology Inc. in other countries.
+
+GestIC is a registered trademark of Microchip Technology Germany II GmbH & Co. KG, a subsidiary of Microchip
+Technology Inc., in other countries.
+
+All other trademarks mentioned herein are property of their respective companies.
+
+© 2020 Microchip Technology Inc.  Datasheet  DS20006270B-page 36
+                                                    AT24C128C/AT24C256C
+
+© 2020, Microchip Technology Incorporated, Printed in the U.S.A., All Rights Reserved.
+ISBN: 978-1-5224-6241-5
+AMBA, Arm, Arm7, Arm7TDMI, Arm9, Arm11, Artisan, big.LITTLE, Cordio, CoreLink, CoreSight, Cortex, DesignStart,
+DynamIQ, Jazelle, Keil, Mali, Mbed, Mbed Enabled, NEON, POP, RealView, SecurCore, Socrates, Thumb,
+TrustZone, ULINK, ULINK2, ULINK-ME, ULINK-PLUS, ULINKpro, µVision, Versatile are trademarks or registered
+trademarks of Arm Limited (or its subsidiaries) in the US and/or elsewhere.
+
+Quality Management System
+
+For information regarding Microchip’s Quality Management Systems, please visit www.microchip.com/quality.
+
+© 2020 Microchip Technology Inc.  Datasheet  DS20006270B-page 37
+                                  Worldwide Sales and Service
+
+AMERICAS                          ASIA/PACIFIC           ASIA/PACIFIC             EUROPE
+
+Corporate Office                  Australia - Sydney     India - Bangalore        Austria - Wels
+2355 West Chandler Blvd.          Tel: 61-2-9868-6733    Tel: 91-80-3090-4444     Tel: 43-7242-2244-39
+Chandler, AZ 85224-6199           China - Beijing        India - New Delhi        Fax: 43-7242-2244-393
+Tel: 480-792-7200                 Tel: 86-10-8569-7000   Tel: 91-11-4160-8631     Denmark - Copenhagen
+Fax: 480-792-7277                 China - Chengdu        India - Pune             Tel: 45-4485-5910
+Technical Support:                Tel: 86-28-8665-5511   Tel: 91-20-4121-0141     Fax: 45-4485-2829
+www.microchip.com/support         China - Chongqing      Japan - Osaka            Finland - Espoo
+Web Address:                      Tel: 86-23-8980-9588   Tel: 81-6-6152-7160      Tel: 358-9-4520-820
+www.microchip.com                 China - Dongguan       Japan - Tokyo            France - Paris
+Atlanta                           Tel: 86-769-8702-9880  Tel: 81-3-6880- 3770     Tel: 33-1-69-53-63-20
+Duluth, GA                        China - Guangzhou      Korea - Daegu            Fax: 33-1-69-30-90-79
+Tel: 678-957-9614                 Tel: 86-20-8755-8029   Tel: 82-53-744-4301      Germany - Garching
+Fax: 678-957-1455                 China - Hangzhou       Korea - Seoul            Tel: 49-8931-9700
+Austin, TX                        Tel: 86-571-8792-8115  Tel: 82-2-554-7200       Germany - Haan
+Tel: 512-257-3370                 China - Hong Kong SAR  Malaysia - Kuala Lumpur  Tel: 49-2129-3766400
+Boston                            Tel: 852-2943-5100     Tel: 60-3-7651-7906      Germany - Heilbronn
+Westborough, MA                   China - Nanjing        Malaysia - Penang        Tel: 49-7131-72400
+Tel: 774-760-0087                 Tel: 86-25-8473-2460   Tel: 60-4-227-8870       Germany - Karlsruhe
+Fax: 774-760-0088                 China - Qingdao        Philippines - Manila     Tel: 49-721-625370
+Chicago                           Tel: 86-532-8502-7355  Tel: 63-2-634-9065       Germany - Munich
+Itasca, IL                        China - Shanghai       Singapore                Tel: 49-89-627-144-0
+Tel: 630-285-0071                 Tel: 86-21-3326-8000   Tel: 65-6334-8870        Fax: 49-89-627-144-44
+Fax: 630-285-0075                 China - Shenyang       Taiwan - Hsin Chu        Germany - Rosenheim
+Dallas                            Tel: 86-24-2334-2829   Tel: 886-3-577-8366      Tel: 49-8031-354-560
+Addison, TX                       China - Shenzhen       Taiwan - Kaohsiung       Israel - Ra’anana
+Tel: 972-818-7423                 Tel: 86-755-8864-2200  Tel: 886-7-213-7830      Tel: 972-9-744-7705
+Fax: 972-818-2924                 China - Suzhou         Taiwan - Taipei          Italy - Milan
+Detroit                           Tel: 86-186-6233-1526  Tel: 886-2-2508-8600     Tel: 39-0331-742611
+Novi, MI                          China - Wuhan          Thailand - Bangkok       Fax: 39-0331-466781
+Tel: 248-848-4000                 Tel: 86-27-5980-5300   Tel: 66-2-694-1351       Italy - Padova
+Houston, TX                       China - Xian           Vietnam - Ho Chi Minh    Tel: 39-049-7625286
+Tel: 281-894-5983                 Tel: 86-29-8833-7252   Tel: 84-28-5448-2100     Netherlands - Drunen
+Indianapolis                      China - Xiamen                                  Tel: 31-416-690399
+Noblesville, IN                   Tel: 86-592-2388138                             Fax: 31-416-690340
+Tel: 317-773-8323                 China - Zhuhai                                  Norway - Trondheim
+Fax: 317-773-5453                 Tel: 86-756-3210040                             Tel: 47-72884388
+Tel: 317-536-2380                                                                 Poland - Warsaw
+Los Angeles                                                                       Tel: 48-22-3325737
+Mission Viejo, CA                                                                 Romania - Bucharest
+Tel: 949-462-9523                                                                 Tel: 40-21-407-87-50
+Fax: 949-462-9608                                                                 Spain - Madrid
+Tel: 951-273-7800                                                                 Tel: 34-91-708-08-90
+Raleigh, NC                                                                       Fax: 34-91-708-08-91
+Tel: 919-844-7510                                                                 Sweden - Gothenberg
+New York, NY                                                                      Tel: 46-31-704-60-40
+Tel: 631-435-6000                                                                 Sweden - Stockholm
+San Jose, CA                                                                      Tel: 46-8-5090-4654
+Tel: 408-735-9110                                                                 UK - Wokingham
+Tel: 408-436-4270                                                                 Tel: 44-118-921-5800
+Canada - Toronto                                                                  Fax: 44-118-921-5820
+Tel: 905-695-1980
+Fax: 905-695-2078
+
+© 2020 Microchip Technology Inc.                         Datasheet                DS20006270B-page 38
+
