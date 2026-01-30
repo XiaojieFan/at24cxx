@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2019-04-13     XiaojieFan   the first version
  * 2019-12-04     RenMing      Use PAGE WRITE instead of BYTE WRITE and input address can be selected
+ * 2026-01-31     CXSforHPU    Use Konfig to control the EEPROM type
  */
 
 #ifndef __AT24CXX_H__
@@ -31,8 +32,30 @@
 
 #define EE_TWR      5
 
-#ifndef PKG_AT24CXX_EE_TYPE
-#define PKG_AT24CXX_EE_TYPE AT24C02
+/* 根据宏定义选择 EEPROM 类型，优先匹配已定义的宏，未定义时默认使用 AT24C02 */
+#if defined(PKG_AT24CXX_EE_TYPE_AT24C01)
+    #define PKG_AT24CXX_EE_TYPE AT24C01
+#elif defined(PKG_AT24CXX_EE_TYPE_AT24C02)
+    #define PKG_AT24CXX_EE_TYPE AT24C02
+#elif defined(PKG_AT24CXX_EE_TYPE_AT24C04)
+    #define PKG_AT24CXX_EE_TYPE AT24C04
+#elif defined(PKG_AT24CXX_EE_TYPE_AT24C08)
+    #define PKG_AT24CXX_EE_TYPE AT24C08
+#elif defined(PKG_AT24CXX_EE_TYPE_AT24C16)
+    #define PKG_AT24CXX_EE_TYPE AT24C16
+#elif defined(PKG_AT24CXX_EE_TYPE_AT24C32)
+    #define PKG_AT24CXX_EE_TYPE AT24C32
+#elif defined(PKG_AT24CXX_EE_TYPE_AT24C64)
+    #define PKG_AT24CXX_EE_TYPE AT24C64
+#elif defined(PKG_AT24CXX_EE_TYPE_AT24C128)
+    #define PKG_AT24CXX_EE_TYPE AT24C128
+#elif defined(PKG_AT24CXX_EE_TYPE_AT24C256)
+    #define PKG_AT24CXX_EE_TYPE AT24C256
+#elif defined(PKG_AT24CXX_EE_TYPE_AT24C512)
+    #define PKG_AT24CXX_EE_TYPE AT24C512
+#else
+    /* 默认使用 AT24C02 */
+    #define PKG_AT24CXX_EE_TYPE AT24C02
 #endif
 
 #define AT24CXX_A0  (1 << 0)
