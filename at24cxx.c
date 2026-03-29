@@ -27,38 +27,6 @@
 #ifdef PKG_USING_AT24CXX
 #define AT24CXX_ADDR (0xA0 >> 1)                      //A0 A1 A2 connect GND
 
-#if (PKG_AT24CXX_EE_TYPE == AT24C01)
-    #define AT24CXX_PAGE_BYTE               8
-    #define AT24CXX_MAX_MEM_ADDRESS         128
-#elif (PKG_AT24CXX_EE_TYPE == AT24C02)
-    #define AT24CXX_PAGE_BYTE               8
-    #define AT24CXX_MAX_MEM_ADDRESS         256
-#elif (PKG_AT24CXX_EE_TYPE == AT24C04)
-    #define AT24CXX_PAGE_BYTE               16
-    #define AT24CXX_MAX_MEM_ADDRESS         512
-#elif (PKG_AT24CXX_EE_TYPE == AT24C08)
-    #define AT24CXX_PAGE_BYTE               16
-    #define AT24CXX_MAX_MEM_ADDRESS         1024
-#elif (PKG_AT24CXX_EE_TYPE == AT24C16)
-    #define AT24CXX_PAGE_BYTE               16
-    #define AT24CXX_MAX_MEM_ADDRESS         2048
-#elif (PKG_AT24CXX_EE_TYPE == AT24C32)
-    #define AT24CXX_PAGE_BYTE               32
-    #define AT24CXX_MAX_MEM_ADDRESS         4096
-#elif (PKG_AT24CXX_EE_TYPE == AT24C64)
-    #define AT24CXX_PAGE_BYTE               32
-    #define AT24CXX_MAX_MEM_ADDRESS         8192
-#elif (PKG_AT24CXX_EE_TYPE == AT24C128)
-    #define AT24CXX_PAGE_BYTE               64
-    #define AT24CXX_MAX_MEM_ADDRESS         16384
-#elif (PKG_AT24CXX_EE_TYPE == AT24C256)
-    #define AT24CXX_PAGE_BYTE               64
-    #define AT24CXX_MAX_MEM_ADDRESS         32768
-#elif (PKG_AT24CXX_EE_TYPE == AT24C512)
-    #define AT24CXX_PAGE_BYTE               128
-    #define AT24CXX_MAX_MEM_ADDRESS         65536
-#endif
-
 static rt_err_t read_regs(at24cxx_device_t dev, rt_uint8_t len, rt_uint8_t *buf)
 {
     struct rt_i2c_msg msgs;
