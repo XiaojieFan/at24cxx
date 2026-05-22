@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2019-04-13     XiaojieFan   the first version
  * 2019-12-04     RenMing      Use PAGE WRITE instead of BYTE WRITE and input address can be selected
+ * 2026-02-01     CXSforHPU    Declare the reverse initialization function in the header file
  */
 
 #ifndef __AT24CXX_H__
@@ -80,6 +81,7 @@ struct at24cxx_device
 typedef struct at24cxx_device *at24cxx_device_t;
 
 extern at24cxx_device_t at24cxx_init(const char *i2c_bus_name, uint8_t AddrInput);
+extern void at24cxx_deinit(at24cxx_device_t dev);
 extern rt_err_t at24cxx_check(at24cxx_device_t dev);
 extern rt_err_t at24cxx_read(at24cxx_device_t dev, uint32_t ReadAddr, uint8_t *pBuffer, uint16_t NumToRead);
 extern rt_err_t at24cxx_write(at24cxx_device_t dev, uint32_t WriteAddr, uint8_t *pBuffer, uint16_t NumToWrite);
