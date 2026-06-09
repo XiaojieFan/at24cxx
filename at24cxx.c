@@ -110,7 +110,7 @@ static rt_err_t at24cxx_read_page(at24cxx_device_t dev, uint32_t readAddr, uint8
     msgs[1].buf = pBuffer;
     msgs[1].len = numToRead;
 
-    if(rt_i2c_transfer(dev->i2c, msgs, 2) <= 0)
+    if(rt_i2c_transfer(dev->i2c, msgs, 2) != 2)
     {
         return RT_ERROR;
     }
@@ -142,7 +142,7 @@ static rt_err_t at24cxx_write_page(at24cxx_device_t dev, uint32_t wirteAddr, uin
     msgs[1].buf = pBuffer;
     msgs[1].len = numToWrite;
 
-    if(rt_i2c_transfer(dev->i2c, msgs, 2) <= 0)
+    if(rt_i2c_transfer(dev->i2c, msgs, 2) != 2)
     {
         return RT_ERROR;
     }
@@ -291,6 +291,11 @@ rt_err_t at24cxx_write(at24cxx_device_t dev, uint32_t WriteAddr, uint8_t *pBuffe
                 rt_thread_mdelay(2);
                 WriteAddr++;
             }
+            else
+            {
+                result = -RT_ERROR;
+                break;
+            }
             if (++i == NumToWrite)
             {
                 break;
@@ -304,7 +309,7 @@ rt_err_t at24cxx_write(at24cxx_device_t dev, uint32_t WriteAddr, uint8_t *pBuffe
     }
     rt_mutex_release(dev->lock);
 
-    return RT_EOK;
+    return result;
 }
 
 /**
@@ -456,6 +461,70 @@ void at24cxx_deinit(at24cxx_device_t dev)
 }
 
 #ifdef PKG_AT24CXX_FINSH
+/** Number of EEPROM bytes printed per dump line. */
+#define AT24CXX_DUMP_LINE_BYTES         16U
+
+/**
+ * @brief Dump raw bytes from the AT24CXX EEPROM.
+ *
+ * @param dev AT24CXX device handle.
+ * @param addr EEPROM physical start address.
+ * @param length Number of bytes to dump.
+ *
+ * @return RT_EOK on success, otherwise RT_ERROR.
+ */
+static rt_err_t at24cxx_dump_data(at24cxx_device_t dev, uint32_t addr, uint32_t length)
+{
+    uint8_t buf[AT24CXX_DUMP_LINE_BYTES];
+    uint32_t remain;
+
+    RT_ASSERT(dev);
+
+    if ((length == 0U) || (addr >= AT24CXX_MAX_MEM_ADDRESS) ||
+        (length > (AT24CXX_MAX_MEM_ADDRESS - addr)))
+    {
+        rt_kprintf("Usage: at24cxx dump [addr] [len]\n");
+        rt_kprintf("Example: at24cxx dump 0 32\n");
+        rt_kprintf("Range error: addr=0x%08x len=%u max=0x%08x\n", (unsigned int)addr, (unsigned int)length, (unsigned int)AT24CXX_MAX_MEM_ADDRESS);
+        return RT_ERROR;
+    }
+
+    rt_kprintf("AT24 dump: bus=%s addr_input=%u addr=0x%08x len=%u\n", dev->i2c->parent.parent.name, (unsigned int)dev->AddrInput, (unsigned int)addr, (unsigned int)length);
+
+    remain = length;
+
+    while (remain > 0U)
+    {
+        uint16_t chunk;
+        uint16_t i;
+
+        chunk = (remain > AT24CXX_DUMP_LINE_BYTES) ?
+                AT24CXX_DUMP_LINE_BYTES : (uint16_t)remain;
+
+        if (at24cxx_page_read(dev, addr, buf, chunk) != RT_EOK)
+        {
+            rt_kprintf("AT24 dump read failed at 0x%08x len=%u\n",
+                       (unsigned int)addr,
+                       (unsigned int)chunk);
+            return RT_ERROR;
+        }
+
+        rt_kprintf("%08x:", (unsigned int)addr);
+
+        for (i = 0U; i < chunk; i++)
+        {
+            rt_kprintf(" %02x", buf[i]);
+        }
+
+        rt_kprintf("\n");
+
+        addr += chunk;
+        remain -= chunk;
+    }
+
+    return RT_EOK;
+}
+
 uint8_t TEST_BUFFER[] = "WELCOM TO RTT";
 #define SIZE sizeof(TEST_BUFFER)
 
@@ -467,7 +536,7 @@ void at24cxx(int argc, char *argv[])
     {
         if (!strcmp(argv[1], "probe"))
         {
-            if (argc > 2)
+            if (argc > 3)
             {
                 /* initialize the sensor when first probe */
                 if (!dev || strcmp(dev->i2c->parent.parent.name, argv[2]))
@@ -482,8 +551,31 @@ void at24cxx(int argc, char *argv[])
             }
             else
             {
-                rt_kprintf("at24cxx probe <dev_name> <AddrInput> - probe sensor by given name\n");
+                rt_kprintf("at24cxx probe <dev_name> <AddrInput> - probe eeprom by given name\n");
             }
+        }
+        else if (!strcmp(argv[1], "dump"))
+        {
+            uint32_t addr = 0U;
+            uint32_t length = 32U;
+
+            if (argc > 2)
+            {
+                addr = strtoul(argv[2], RT_NULL, 0);
+            }
+
+            if (argc > 3)
+            {
+                length = strtoul(argv[3], RT_NULL, 0);
+            }
+
+            if (dev == RT_NULL)
+            {
+                rt_kprintf("Please using 'at24cxx probe <dev_name> <AddrInput>' first\n");
+                return;
+            }
+
+            at24cxx_dump_data(dev, addr, length);
         }
         else if (!strcmp(argv[1], "read"))
         {
@@ -522,10 +614,11 @@ void at24cxx(int argc, char *argv[])
     else
     {
         rt_kprintf("Usage:\n");
-        rt_kprintf("at24cxx probe <dev_name>   - probe eeprom by given name\n");
-        rt_kprintf("at24cxx check              - check eeprom at24cxx \n");
-        rt_kprintf("at24cxx read               - read eeprom at24cxx data\n");
-        rt_kprintf("at24cxx write              - write eeprom at24cxx data\n");
+        rt_kprintf("at24cxx probe <dev_name> <AddrInput> - probe eeprom by given name\n");
+        rt_kprintf("at24cxx check                        - check eeprom at24cxx\n");
+        rt_kprintf("at24cxx read                         - read eeprom at24cxx data\n");
+        rt_kprintf("at24cxx write                        - write eeprom at24cxx data\n");
+        rt_kprintf("at24cxx dump [addr] [len]            - dump raw eeprom bytes\n");
 
     }
 }
