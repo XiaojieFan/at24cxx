@@ -8,6 +8,8 @@
  * 2019-04-13     XiaojieFan   the first version
  * 2019-12-04     RenMing      Use PAGE WRITE instead of BYTE WRITE and input address can be selected
  * 2026-02-01     CXSforHPU    Declare the reverse initialization function in the header file
+ * 2026-06-10     wdfk-prog    Reconstructing the core API and error contracts for reading and writing
+ * 2026-06-10     wdfk-prog    Refactor Finsh/MSH debugging commands 
  */
 
 #ifndef __AT24CXX_H__
